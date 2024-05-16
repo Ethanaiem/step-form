@@ -1,0 +1,102 @@
+/* MultiStepForm.css */
+.form-container {
+    width: 50%;
+    margin: auto;
+    margin-top: 50px;
+    text-align: center;
+    font-family: 'Arial', sans-serif;
+}
+
+.title {
+    font-weight: bold;
+    color: #1e2a78;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.stepper {
+    margin-bottom: 20px;
+}
+
+.step-content {
+    margin-top: 20px;
+}
+
+.step-title {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.loan-amount-input {
+    font-size: 24px;
+}
+
+.dollar-sign {
+    font-size: 24px;
+    color: #1e2a78;
+    margin-right: 8px;
+}
+
+.phone-code {
+    margin-right: 8px;
+}
+
+.time-period-button {
+    height: 56px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    color: #333;
+}
+
+.time-period-button.selected {
+    background-color: #e0f0ff;
+    border-color: #1e2a78;
+    color: #1e2a78;
+}
+
+.step-navigation {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.next-button, .back-button {
+    background-color: #d1e0ff;
+    color: #333;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+.back-button {
+    background-color: #f0f0f0;
+    margin-right: 10px;
+}
+
+.next-button:disabled {
+    background-color: #e0e0e0;
+    color: #888;
+}
+
+.sub-text {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.agreement-checkbox {
+    margin-top: 20px;
+    text-align: left;
+}
+
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 50px;
+}

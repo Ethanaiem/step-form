@@ -1,0 +1,102 @@
+/* MultiStepFormExtended.css */
+
+.form-container {
+    width: 50%;
+    margin: auto;
+    margin-top: 50px;
+    text-align: center;
+    font-family: 'Arial', sans-serif;
+}
+
+.stepper {
+    margin-bottom: 20px;
+    background-color: transparent;
+}
+
+.stepper .MuiStep-root {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    position: relative;
+}
+
+.stepper .MuiStepConnector-line {
+    border-top-width: 2px;
+    border-top-style: solid; /* Ensures the line is solid */
+    border-color: #1e2a78; /* Deep blue color for the line */
+}
+
+.step-content {
+    margin-top: 20px;
+}
+
+.step-title {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.business-entity-button, .home-based-button {
+    height: 56px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    color: #333;
+    margin: 5px; /* Spacing around buttons */
+}
+
+.business-entity-button.selected, .home-based-button.selected {
+    background-color: #e0f0ff;
+    border-color: #1e2a78;
+    color: #1e2a78;
+}
+
+.step-navigation {
+    margin-top: 20px;
+}
+
+.next-button, .back-button {
+    background-color: #d1e0ff; /* Light blue background */
+    color: #333;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+.back-button {
+    background-color: #f0f0f0; /* Light grey background for back button */
+    margin-right: 10px;
+}
+
+.next-button:disabled {
+    background-color: #e0e0e0; /* Disabled state */
+    color: #888;
+}
+
+/* Additional styles for step 9 */
+.step-content button {
+    margin: 8px;
+    border-radius: 4px; /* Rounded corners for buttons */
+    box-shadow: none; /* Remove default MUI button shadows if needed */
+}
+
+.step-content button:hover {
+    background-color: #f0f0f0; /* Light grey background on hover */
+}
+
+/* Ensure buttons are clearly readable and visually appealing */
+.step-content button {
+    height: 48px;
+    font-size: 16px; /* Suitable font size for readability */
+    color: #333; /* Dark font for better contrast */
+    border: 1px solid #ccc; /* Subtle borders for buttons */
+}
+
+.step-content button.Mui-contained {
+    background-color: #d1e0ff; /* Light blue background for selected/active button */
+    color: #333; /* Dark font for contrast */
+}
+
+/* Additional styles for the slider */
+.MuiSlider-root {
+    color: #1e2a78; /* Color for the slider thumb and track */
+    margin: 20px; /* Spacing around the slider for better interaction */
+}
