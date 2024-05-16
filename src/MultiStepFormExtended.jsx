@@ -487,6 +487,34 @@ const MultiStepFormExtended = () => {
                     </div>
                 </div>
             )}
+              {activeStep === 11 && isSoleOwner && (
+                <div className="step-content">
+                    <Typography variant="h5" align="center" gutterBottom>
+                        When do you need the money?
+                    </Typography>
+                    <Grid container spacing={2}>
+                        {fundingOptions.map(option => (
+                            <Grid item xs={12} sm={6} key={option}>
+                                <Button
+                                    variant={fundingTime === option ? "contained" : "outlined"}
+                                    onClick={() => setFundingTime(option)}
+                                    fullWidth
+                                >
+                                    {option}
+                                </Button>
+                            </Grid>
+                        ))}
+                    </Grid>
+                    <div className="step-navigation">
+                        <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
+                            Back
+                        </Button>
+                        <Button variant="contained" color="primary" onClick={handleSubmit} className="next-button">
+                            Submit
+                        </Button>
+                    </div>
+                </div>
+            )}
             {activeStep === 11 && !isSoleOwner && !addSecondOwner && (
                 <div className="step-content">
                     <Typography variant="h5" align="center" gutterBottom>
