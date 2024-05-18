@@ -67,8 +67,8 @@
 }
 
 .next-button, .back-button {
-    background-color: #d1e0ff;
-    color: #333;
+    background-color: #154192 !important;
+    color: #fff !important;
     font-weight: bold;
     margin-top: 20px;
 }
@@ -79,8 +79,8 @@
 }
 
 .next-button:disabled {
-    background-color: #e0e0e0;
-    color: #888;
+    background-color: #e0e0e0 !important;
+    color: #888 !important;
 }
 
 .sub-text {

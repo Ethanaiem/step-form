@@ -1,12 +1,16 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { TextField, Button, Stepper, Step, StepLabel, Typography, Grid, Slider, Checkbox, FormControlLabel } from '@mui/material';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
+import dayjs from 'dayjs';
+import axios from 'axios';
 
 import './MultiStepFormExtended.css';
+import secureImage from './assets/secure.png';
+import trustedImage from './assets/trusted.png';
 
 const MultiStepFormExtended = () => {
     const [activeStep, setActiveStep] = useState(0);
@@ -36,6 +40,13 @@ const MultiStepFormExtended = () => {
         state: '',
         zip: ''
     });
+    const [secondOwnerHomeAddress, setSecondOwnerHomeAddress] = useState({
+        unit: '',
+        street: '',
+        city: '',
+        state: '',
+        zip: ''
+    });
     const [fundingTime, setFundingTime] = useState('');
     const [isHomeBased, setIsHomeBased] = useState(null);
     const [registrationDate, setRegistrationDate] = useState(null);
@@ -43,8 +54,13 @@ const MultiStepFormExtended = () => {
     const [secondOwnerDOB, setSecondOwnerDOB] = useState(null)
     const [taxDetails, setTaxDetails] = useState({ SSN: '', ITIN: '', EIN: '' });
     const [secondOwnerTaxDetails, setSecondOwnerTaxDetails] = useState({ SSN: '', ITIN: '', EIN: '' });
-    const steps = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15'];
+    const steps = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16'];
     const fundingOptions = ["Immediately", "1 - 2 Weeks", "30 Days", "More than 30 Days"];
+    // eslint-disable-next-line no-unused-vars
+    const [isFormValid, setIsFormValid] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+    const [errorMessages, setErrorMessages] = useState({ SSN: '', ITIN: '', EIN: '' });
+
 
 
     const handleNext = () => {
@@ -72,12 +88,25 @@ const MultiStepFormExtended = () => {
             [name]: value,
         });
     };
-    const handleInputChange = (setter) => (event) => {
+
+    const handleInputChange = (setter, errorSetter) => (event) => {
         const { name, value } = event.target;
         setter(prevState => ({
             ...prevState,
             [name]: value
         }));
+
+        if ((name === 'SSN' || name === 'ITIN' || name === 'EIN') && value.length !== 9) {
+            errorSetter(prevState => ({
+                ...prevState,
+                [name]: 'It should have 9 digits'
+            }));
+        } else {
+            errorSetter(prevState => ({
+                ...prevState,
+                [name]: ''
+            }));
+        }
     };
 
     const handleSecondInputChange = (e) => {
@@ -96,6 +125,22 @@ const MultiStepFormExtended = () => {
         setRegistrationDate(newValue);
     };
 
+    const handleDobDateChange = (newValue) => {
+        setDateOfBirth(newValue)
+
+        const now = dayjs();
+        const dob = dayjs(newValue);
+        const age = now.diff(dob, 'year');
+
+        if (age < 18) {
+            setErrorMessage('User must be 18 years or above');
+            setIsFormValid(false);
+        } else {
+            setErrorMessage('');
+            setIsFormValid(true);
+        }
+    };
+
     const handleSliderChange = (event, newValue) => {
         setOwnershipPercentage(newValue);
     };
@@ -105,14 +150,46 @@ const MultiStepFormExtended = () => {
         "Improve Cash Flow", "Purchase Equipment", "Pay Taxes", "Remodel Location",
         "Purchase Property", "Refinance an existing loan", "Purchase Inventory"
     ];
+    const isStepValid = (step) => {
+        switch (step) {
+            case 1:
+                return address.city && address.state && address.street && address.unit && address.zip;
+            case 4:
+                return homeAddress.city && homeAddress.state && homeAddress.street && homeAddress.unit && homeAddress.zip;
+            case 5:
+                return dateOfBirth && !errorMessage;
+            case 6:
+                return taxDetails.EIN.length === 9 && (taxDetails.SSN.length === 9 || taxDetails.ITIN.length === 9) && (!errorMessages.SSN || !errorMessages.ITIN) && !errorMessages.EIN;
+            case 11:
+                return secondOwnerHomeAddress.city && secondOwnerHomeAddress.state && secondOwnerHomeAddress.street && secondOwnerHomeAddress.unit && secondOwnerHomeAddress.zip;
+            case 10:
+                return secondOwnerFormData.firstName && secondOwnerFormData.lastName && secondOwnerFormData.email && secondOwnerFormData.contactNumber && secondOwnerFormData.agreement;
+            case 12:
+                return secondOwnerTaxDetails.EIN.length === 9 && (secondOwnerTaxDetails.SSN.length === 9 || secondOwnerTaxDetails.ITIN.length === 9) && (!errorMessages.SSN || !errorMessages.ITIN) && !errorMessages.EIN;
 
-    const isSecondOwnerValid = () => {
-        return secondOwnerFormData.firstName && secondOwnerFormData.lastName && secondOwnerFormData.email && secondOwnerFormData.contactNumber && secondOwnerFormData.agreement;
+            default:
+                return false;
+        }
     };
 
-    const handleSubmit = () => {
-        console.log("Submitted")
-    }
+    const handleSubmit = async (e) => {
+        const formData ={
+            name: 'test',
+            email: 'test@gmail.com',
+            company: 'test'}
+        e.preventDefault();
+        try {
+           const response = await axios.post('http://localhost:8000/form', formData, { withCredentials: true });
+           window.location.href = response.data.url; // Redirect to the DocuSign signing ceremony
+        } catch (error) {
+           console.error('Error submitting form', error);
+        }
+     };
+
+    useEffect(() => {
+        setIsFormValid(isStepValid(activeStep));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [taxDetails, errorMessages, activeStep, errorMessage]);
 
     return (
         <div className="form-container">
@@ -174,6 +251,7 @@ const MultiStepFormExtended = () => {
                                     onChange={handleAddressChange}
                                     fullWidth
                                     margin="normal"
+                                    required
                                 />
                             </Grid>
                         ))}
@@ -182,7 +260,7 @@ const MultiStepFormExtended = () => {
                         <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
                             Back
                         </Button>
-                        <Button variant="contained" color="primary" onClick={handleNext} className="next-button">
+                        <Button variant="contained" color="primary" onClick={handleNext} className="next-button" disabled={!isStepValid(1)}>
                             Next
                         </Button>
                     </div>
@@ -261,9 +339,10 @@ const MultiStepFormExtended = () => {
                                     label={key.charAt(0).toUpperCase() + key.slice(1)}
                                     name={key}
                                     value={value}
-                                    onChange={handleInputChange(setHomeAddress)}
+                                    onChange={handleInputChange(setHomeAddress, setErrorMessages)}
                                     fullWidth
                                     margin="normal"
+                                    required
                                 />
                             </Grid>
                         ))}
@@ -272,7 +351,7 @@ const MultiStepFormExtended = () => {
                         <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
                             Back
                         </Button>
-                        <Button variant="contained" color="primary" onClick={handleNext} className="next-button">
+                        <Button variant="contained" color="primary" onClick={handleNext} className="next-button" disabled={!isStepValid(4)}>
                             Next
                         </Button>
                     </div>
@@ -287,16 +366,22 @@ const MultiStepFormExtended = () => {
 
                         <DesktopDatePicker
                             label="Date"
+                            name='dateOfBirth'
                             value={dateOfBirth}
-                            onChange={(newValue) => handleDateChange(setDateOfBirth, newValue)}
+                            onChange={handleDobDateChange}
                             renderInput={(params) => <TextField {...params} fullWidth />}
                         />
                     </LocalizationProvider>
+                    {errorMessage && (
+                        <Typography variant="body2" color="error" align="center">
+                            {errorMessage}
+                        </Typography>
+                    )}
                     <div className="step-navigation">
                         <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
                             Back
                         </Button>
-                        <Button variant="contained" color="primary" onClick={handleNext} className="next-button" disabled={!dateOfBirth}>
+                        <Button variant="contained" color="primary" onClick={handleNext} className="next-button" disabled={!isStepValid(5)}>
                             Next
                         </Button>
                     </div>
@@ -311,11 +396,12 @@ const MultiStepFormExtended = () => {
                         {Object.entries(taxDetails).map(([key, value]) => (
                             <Grid item xs={12} key={key}>
                                 <TextField
+                                    error={!!errorMessages[key]}
                                     label={key}
                                     variant="outlined"
                                     name={key}
                                     value={value}
-                                    onChange={handleInputChange(setTaxDetails)}
+                                    onChange={handleInputChange(setTaxDetails, setErrorMessages)}
                                     inputProps={{ maxLength: key === 'SSN' || key === 'ITIN' || key === 'EIN' ? 9 : undefined }}
                                     fullWidth
                                 />
@@ -326,12 +412,18 @@ const MultiStepFormExtended = () => {
                         <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
                             Back
                         </Button>
-                        <Button variant="contained" color="primary" onClick={handleNext} className="next-button">
+                        <Button variant="contained" color="primary" onClick={handleNext} className="next-button" disabled={!isFormValid}>
                             Next
                         </Button>
                     </div>
+                    <div className="image-container" style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
+                        <img src={secureImage} alt="Image 1" style={{ width: '20%' }} />
+                        <img src={trustedImage} alt="Image 2" style={{ width: '20%' }} />
+                    </div>
                 </div>
             )}
+
+
             {activeStep === 7 && (
                 <div className="step-content">
                     <Typography variant="h5" align="center" gutterBottom>
@@ -459,7 +551,7 @@ const MultiStepFormExtended = () => {
                     </div>
                 </div>
             )}
-                {activeStep === 10 && !isSoleOwner && !addSecondOwner && (
+            {activeStep === 10 && !isSoleOwner && !addSecondOwner && (
                 <div className="step-content">
                     <Typography variant="h5" align="center" gutterBottom>
                         What do you need the money for?
@@ -487,7 +579,7 @@ const MultiStepFormExtended = () => {
                     </div>
                 </div>
             )}
-              {activeStep === 11 && isSoleOwner && (
+            {activeStep === 11 && isSoleOwner && (
                 <div className="step-content">
                     <Typography variant="h5" align="center" gutterBottom>
                         When do you need the money?
@@ -602,7 +694,7 @@ const MultiStepFormExtended = () => {
                         <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
                             Back
                         </Button>
-                        <Button variant="contained" color="primary" onClick={handleNext} className="next-button" disable={!isSecondOwnerValid()}>
+                        <Button variant="contained" color="primary" onClick={handleNext} className="next-button" disabled={!isStepValid(10)}>
                             Next
                         </Button>
                     </div>
@@ -611,17 +703,48 @@ const MultiStepFormExtended = () => {
             {activeStep === 11 && !isSoleOwner && addSecondOwner && (
                 <div className="step-content">
                     <Typography variant="h5" align="center" gutterBottom>
+                        Second Owner Home Address
+                    </Typography>
+                    <Grid container spacing={2}>
+                        {Object.entries(secondOwnerHomeAddress).map(([key, value]) => (
+                            <Grid item xs={12} sm={6} key={key}>
+                                <TextField
+                                    label={key.charAt(0).toUpperCase() + key.slice(1)}
+                                    name={key}
+                                    value={value}
+                                    onChange={handleInputChange(setSecondOwnerHomeAddress)}
+                                    fullWidth
+                                    margin="normal"
+                                    required
+                                />
+                            </Grid>
+                        ))}
+                    </Grid>
+                    <div className="step-navigation">
+                        <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
+                            Back
+                        </Button>
+                        <Button variant="contained" color="primary" onClick={handleNext} className="next-button" disabled={!isStepValid(11)}>
+                            Next
+                        </Button>
+                    </div>
+                </div>
+            )}
+            {activeStep === 12 && !isSoleOwner && addSecondOwner && (
+                <div className="step-content">
+                    <Typography variant="h5" align="center" gutterBottom>
                         Second Owner Tax Details
                     </Typography>
                     <Grid container spacing={2}>
                         {Object.entries(secondOwnerTaxDetails).map(([key, value]) => (
                             <Grid item xs={12} key={key}>
                                 <TextField
+                                    error={!!errorMessages[key]}
                                     label={key}
                                     variant="outlined"
                                     name={key}
                                     value={value}
-                                    onChange={handleInputChange(setSecondOwnerTaxDetails)}
+                                    onChange={handleInputChange(setSecondOwnerTaxDetails, setErrorMessages)}
                                     inputProps={{ maxLength: key === 'SSN' || key === 'ITIN' || key === 'EIN' ? 9 : undefined }}
                                     fullWidth
                                 />
@@ -632,13 +755,17 @@ const MultiStepFormExtended = () => {
                         <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
                             Back
                         </Button>
-                        <Button variant="contained" color="primary" onClick={handleNext} className="next-button">
+                        <Button variant="contained" color="primary" onClick={handleNext} className="next-button" disabled={!isStepValid(12)}>
                             Next
                         </Button>
                     </div>
+                    <div className="image-container" style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
+                        <img src={secureImage} alt="Image 1" style={{ width: '20%' }} />
+                        <img src={trustedImage} alt="Image 2" style={{ width: '20%' }} />
+                    </div>
                 </div>
             )}
-            {activeStep === 12 && !isSoleOwner && addSecondOwner && (
+            {activeStep === 13 && !isSoleOwner && addSecondOwner && (
                 <div className="step-content">
                     <Typography variant="h5" align="center" gutterBottom>
                         Second Owner Date of Birth
@@ -662,7 +789,7 @@ const MultiStepFormExtended = () => {
                     </div>
                 </div>
             )}
-                   {activeStep === 13 && !isSoleOwner && addSecondOwner && (
+            {activeStep === 14 && !isSoleOwner && addSecondOwner && (
                 <div className="step-content">
                     <Typography variant="h5" align="center" gutterBottom>
                         What do you need the money for?
@@ -690,7 +817,7 @@ const MultiStepFormExtended = () => {
                     </div>
                 </div>
             )}
-            {activeStep === 14 && !isSoleOwner && addSecondOwner && (
+            {activeStep === 15 && !isSoleOwner && addSecondOwner && (
                 <div className="step-content">
                     <Typography variant="h5" align="center" gutterBottom>
                         When do you need the money?

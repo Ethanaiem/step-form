@@ -25,6 +25,7 @@ const MultiStepForm = () => {
     });
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState('');
+    // eslint-disable-next-line no-unused-vars
     const [preApproved, setPreApproved] = useState(false);
 
     const navigate = useNavigate();
@@ -84,7 +85,7 @@ const MultiStepForm = () => {
                     creditScore,
                     ...formData
                 });
-                setMessage('Application submitted successfully!');
+                setMessage('You have been pre-approved successfully!');
             } else {
                 setMessage('You have been pre-approved successfully!');
                 setPreApproved(true); // Set pre-approved state
@@ -144,7 +145,7 @@ const MultiStepForm = () => {
                                 className="loan-amount-input"
                             />
                             <div className="step-navigation">
-                                <Button variant="contained" color="primary" onClick={handleNext} className="next-button">
+                                <Button variant="contained" onClick={handleNext} className="next-button">
                                     Next
                                 </Button>
                             </div>
@@ -342,7 +343,7 @@ const MultiStepForm = () => {
                             <FormControlLabel
                                 control={<Checkbox name="agreement" checked={formData.agreement} onChange={handleInputChange} />}
                                 // eslint-disable-next-line react/no-unescaped-entities
-                                label={<Typography variant="body2">By selecting "Get Loan Offers" you agree to our <a href="#privacy-policy">Privacy Policy</a>.</Typography>}
+                                label={<Typography variant="body2">By selecting "Get Loan Offers" you agree to our <a href="https://www.klendify.com/privacy-policy" target="_blank">Privacy Policy</a>.</Typography>}
                                 className="agreement-checkbox"
                             />
                             <div className="step-navigation">
@@ -363,11 +364,9 @@ const MultiStepForm = () => {
                             <Typography variant="h5" align="center" gutterBottom>
                                 {message}
                             </Typography>
-                            {preApproved && (
                                 <Button variant="contained" color="primary" className="next-button" onClick={() => navigate('/extended-form')}>
                                     Continue
                                 </Button>
-                            )}
                         </div>
                     )}
                 </>
