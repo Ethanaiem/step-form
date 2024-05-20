@@ -4,6 +4,7 @@ import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import PhoneInput from 'react-phone-input-2';
+import { LinearProgress } from '@mui/material';
 import 'react-phone-input-2/lib/style.css';
 import dayjs from 'dayjs';
 import axios from 'axios';
@@ -18,7 +19,7 @@ const MultiStepFormExtended = () => {
     const [businessEntity, setBusinessEntity] = useState('');
     const [isSoleOwner, setIsSoleOwner] = useState(null);
     const [loanPurpose, setLoanPurpose] = useState('');
-    const [ownershipPercentage, setOwnershipPercentage] = useState(50); // Default to 50% for demo
+    const [ownershipPercentage, setOwnershipPercentage] = useState(0); // Default to 50% for demo
     const [addSecondOwner, setAddSecondOwner] = useState(false);
     const [secondOwnerFormData, setSecondOwnerFormData] = useState({
         firstName: '',
@@ -63,6 +64,8 @@ const MultiStepFormExtended = () => {
     const [errorMessages, setErrorMessages] = useState({ SSN: '', ITIN: '', EIN: '' });
     const location = useLocation();
     const [prevFormData, setPrevFormData] = useState(null)
+    const totalSteps = steps.length;
+    const progress = (activeStep / (totalSteps - 1)) * 100;
     useEffect(() => {
         const data = location.state?.formData
         setPrevFormData(data)
@@ -85,6 +88,7 @@ const MultiStepFormExtended = () => {
 
     const handleBusinessEntitySelect = (entity) => {
         setBusinessEntity(entity);
+        handleNext()
     };
 
     const handleAddressChange = (e) => {
@@ -125,6 +129,7 @@ const MultiStepFormExtended = () => {
 
     const handleHomeBasedSelect = (value) => {
         setIsHomeBased(value);
+        handleNext()
     };
 
     const handleDateChange = (newValue) => {
@@ -219,7 +224,7 @@ const MultiStepFormExtended = () => {
         };
         e.preventDefault();
         try {
-           const response = await axios.post('http://localhost:8000/form', formData, { withCredentials: true });
+           const response = await axios.post('https://us-central1-ethan-klendify.cloudfunctions.net/api/form', formData, { withCredentials: true });
            window.location.href = response.data.url; // Redirect to the DocuSign signing ceremony
         } catch (error) {
            console.error('Error submitting form', error);
@@ -240,6 +245,7 @@ const MultiStepFormExtended = () => {
                     </Step>
                 ))}
             </Stepper>
+            <LinearProgress variant="determinate" value={progress} sx={{ mt: 2, mb: 2 }} />
             {activeStep === 0 && (
                 <div className="step-content">
                     <Typography variant="h5" align="center" gutterBottom className="step-title">
@@ -814,6 +820,7 @@ const MultiStepFormExtended = () => {
 
                         <DesktopDatePicker
                             label="Date"
+                            name='secondOwnerDOB'
                             value={secondOwnerDOB}
                             onChange={(newValue) => handleDateChange(setSecondOwnerDOB, newValue)}
                             renderInput={(params) => <TextField {...params} fullWidth />}
