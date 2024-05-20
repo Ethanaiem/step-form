@@ -6,7 +6,7 @@ import 'react-phone-input-2/lib/style.css';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useNavigate } from 'react-router-dom';
 import { db } from './firebase.config';
-import { collection, addDoc, getDocs, query, where } from 'firebase/firestore'; 
+import { collection, addDoc, getDocs, query, where } from 'firebase/firestore';
 import './MultiStepForm.css';
 
 const MultiStepForm = () => {
@@ -41,8 +41,12 @@ const MultiStepForm = () => {
     };
 
     const handleLoanAmountChange = (event) => {
-        setLoanAmount(event.target.value);
+        // Remove all non-digits and then format
+        const amount = event.target.value.replace(/\D/g, ''); // Remove non-digits
+        const formattedAmount = amount.replace(/\B(?=(\d{3})+(?!\d))/g, ","); // Insert commas
+        setLoanAmount(formattedAmount);
     };
+
 
     const handleTimePeriodSelect = (period) => {
         setTimePeriod(period);
@@ -79,7 +83,7 @@ const MultiStepForm = () => {
         try {
             const q = query(collection(db, 'loanApplications'), where('email', '==', formData.email));
             const querySnapshot = await getDocs(q);
-            
+
             if (querySnapshot.empty) {
                 await addDoc(collection(db, 'loanApplications'), {
                     loanAmount,
@@ -107,21 +111,23 @@ const MultiStepForm = () => {
     };
 
     const changeForm = () => {
-        navigate('/extended-form', {state: {
-            formData: formData,
-            loanAmount: loanAmount,
-            creditScore: creditScore,
-            monthlyRevenue: monthlyRevenue
+        navigate('/extended-form', {
+            state: {
+                formData: formData,
+                loanAmount: loanAmount,
+                creditScore: creditScore,
+                monthlyRevenue: monthlyRevenue
 
-        }})
+            }
+        })
     }
 
     return (
         <div className="form-container">
-            <Typography variant="h6" align="center" gutterBottom className="title">
+            <Typography align="center" gutterBottom className="title">
                 QUICK & FLEXIBLE BUSINESS LOANS
             </Typography>
-            <Typography variant="h5" align="center" gutterBottom className="subtitle">
+            <Typography align="center" gutterBottom className="subtitle">
                 Get Pre-Qualified for Financing
             </Typography>
             <Stepper activeStep={activeStep} alternativeLabel className="stepper">
@@ -146,7 +152,7 @@ const MultiStepForm = () => {
                                 Enter your desired loan amount.
                             </Typography>
                             <TextField
-                                type="number"
+                                type="text"
                                 label="Loan Amount"
                                 value={loanAmount}
                                 onChange={handleLoanAmountChange}
@@ -157,8 +163,9 @@ const MultiStepForm = () => {
                                 }}
                                 className="loan-amount-input"
                             />
+
                             <div className="step-navigation">
-                                <Button variant="contained" onClick={handleNext} className="next-button">
+                                <Button variant="contained" onClick={handleNext} className="loan-next-button">
                                     Next
                                 </Button>
                             </div>
@@ -372,14 +379,14 @@ const MultiStepForm = () => {
                     {activeStep === steps.length && (
                         <div className="completion-message">
                             <div className="completion-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 24 24"><path fill="#1e2a78" d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm-1.706 18.207l-4.793-4.793 1.414-1.414 3.379 3.379 7.379-7.379 1.414 1.414-8.793 8.793z"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 24 24"><path fill="#1e2a78" d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm-1.706 18.207l-4.793-4.793 1.414-1.414 3.379 3.379 7.379-7.379 1.414 1.414-8.793 8.793z" /></svg>
                             </div>
                             <Typography variant="h5" align="center" gutterBottom>
                                 {message}
                             </Typography>
-                                <Button variant="contained" color="primary" className="next-button" onClick={changeForm}>
-                                    Continue
-                                </Button>
+                            <Button variant="contained" color="primary" className="next-button" onClick={changeForm}>
+                                Continue
+                            </Button>
                         </div>
                     )}
                 </>
