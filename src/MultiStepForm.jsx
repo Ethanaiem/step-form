@@ -46,14 +46,17 @@ const MultiStepForm = () => {
 
     const handleTimePeriodSelect = (period) => {
         setTimePeriod(period);
+        handleNext()
     };
 
     const handleMonthlyRevenueSelect = (revenue) => {
         setMonthlyRevenue(revenue);
+        handleNext()
     };
 
     const handleCreditScoreSelect = (score) => {
         setCreditScore(score);
+        handleNext()
     };
 
     const handleInputChange = (e) => {

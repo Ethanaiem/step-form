@@ -156,6 +156,11 @@ const MultiStepFormExtended = () => {
         setOwnershipPercentage(newValue);
     };
 
+    const handleLoanPurpose = (purpose) => {
+        setLoanPurpose(purpose)
+        handleNext()
+    }
+
     const loanPurposes = [
         "Expand Business", "Import Goods", "Promote Business", "Purchase a vehicle",
         "Improve Cash Flow", "Purchase Equipment", "Pay Taxes", "Remodel Location",
@@ -541,7 +546,7 @@ const MultiStepFormExtended = () => {
                             <Grid item xs={12} sm={6} key={purpose}>
                                 <Button
                                     variant={loanPurpose === purpose ? "contained" : "outlined"}
-                                    onClick={() => setLoanPurpose(purpose)}
+                                    onClick={() => handleLoanPurpose(purpose)}
                                     fullWidth
                                 >
                                     {purpose}
@@ -607,7 +612,7 @@ const MultiStepFormExtended = () => {
                             <Grid item xs={12} sm={6} key={purpose}>
                                 <Button
                                     variant={loanPurpose === purpose ? "contained" : "outlined"}
-                                    onClick={() => setLoanPurpose(purpose)}
+                                    onClick={() => handleLoanPurpose(purpose)}
                                     fullWidth
                                 >
                                     {purpose}
@@ -846,7 +851,7 @@ const MultiStepFormExtended = () => {
                             <Grid item xs={12} sm={6} key={purpose}>
                                 <Button
                                     variant={loanPurpose === purpose ? "contained" : "outlined"}
-                                    onClick={() => setLoanPurpose(purpose)}
+                                    onClick={() => handleLoanPurpose(purpose)}
                                     fullWidth
                                 >
                                     {purpose}
