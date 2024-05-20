@@ -579,7 +579,7 @@ const MultiStepFormExtended = () => {
                     </div>
                 </div>
             )}
-            {activeStep === 11 && isSoleOwner && (
+            {activeStep === 9 && isSoleOwner && (
                 <div className="step-content">
                     <Typography variant="h5" align="center" gutterBottom>
                         When do you need the money?
