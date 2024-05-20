@@ -9,6 +9,7 @@ import 'react-phone-input-2/lib/style.css';
 import dayjs from 'dayjs';
 import axios from 'axios';
 import { useLocation } from 'react-router-dom';
+import { CircularProgress } from '@mui/material';
 
 import './MultiStepFormExtended.css';
 import secureImage from './assets/secure.png';
@@ -66,6 +67,7 @@ const MultiStepFormExtended = () => {
     const [prevFormData, setPrevFormData] = useState(null)
     const totalSteps = steps.length;
     const progress = (activeStep / (totalSteps - 1)) * 100;
+    const [isLoading, setIsLoading] = useState(false);
     useEffect(() => {
         const data = location.state?.formData
         setPrevFormData(data)
@@ -194,6 +196,9 @@ const MultiStepFormExtended = () => {
     };
 
     const handleSubmit = async (e) => {
+        e.preventDefault();
+        setIsLoading(true); // Start loading
+
         const formData = {
             owner_one_name: prevFormData.firstName + prevFormData.lastName,
             owner_one_email: prevFormData.email,
@@ -233,6 +238,8 @@ const MultiStepFormExtended = () => {
            window.location.href = response.data.url; // Redirect to the DocuSign signing ceremony
         } catch (error) {
            console.error('Error submitting form', error);
+        }finally {
+            setIsLoading(false); // End loading whether successful or not
         }
      };
 
@@ -251,6 +258,11 @@ const MultiStepFormExtended = () => {
                 ))}
             </Stepper>
             <LinearProgress variant="determinate" value={progress} sx={{ mt: 2, mb: 2 }} />
+            {isLoading && (
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100px' }}>
+                    <CircularProgress />
+                </div>
+            )}
             {activeStep === 0 && (
                 <div className="step-content">
                     <Typography variant="h5" align="center" gutterBottom className="step-title">
