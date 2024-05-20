@@ -7,6 +7,7 @@ import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import dayjs from 'dayjs';
 import axios from 'axios';
+import { useLocation } from 'react-router-dom';
 
 import './MultiStepFormExtended.css';
 import secureImage from './assets/secure.png';
@@ -60,7 +61,12 @@ const MultiStepFormExtended = () => {
     const [isFormValid, setIsFormValid] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [errorMessages, setErrorMessages] = useState({ SSN: '', ITIN: '', EIN: '' });
-
+    const location = useLocation();
+    const [prevFormData, setPrevFormData] = useState(null)
+    useEffect(() => {
+        const data = location.state?.formData
+        setPrevFormData(data)
+    }, [])
 
 
     const handleNext = () => {
@@ -172,11 +178,45 @@ const MultiStepFormExtended = () => {
         }
     };
 
+    const formatDate = (date) => {
+        const d = new Date(date);
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    };
+
     const handleSubmit = async (e) => {
-        const formData ={
-            name: 'test',
-            email: 'test@gmail.com',
-            company: 'test'}
+        const formData = {
+            owner_one_name: prevFormData.firstName + prevFormData.lastName,
+            owner_one_email: prevFormData.email,
+            owner_one_contact: prevFormData.contactNumber.toString(),
+            owner_one_dob: formatDate(dateOfBirth),
+            owner_one_ssn: taxDetails.SSN.toString() || taxDetails.EIN.toString(),
+            owner_one_percentage: ownershipPercentage.toString(),
+            owner_one_address: homeAddress.unit + homeAddress.street + homeAddress.city + homeAddress.state,
+            owner_one_city: homeAddress.city,
+            owner_one_state: homeAddress.state,
+            owner_one_zip: homeAddress.zip.toString(),
+            owner_one_cs: location.state.creditScore.toString(),
+            owner_two_name: secondOwnerFormData.firstName + secondOwnerFormData.lastName,
+            owner_two_email: secondOwnerFormData.email,
+            owner_two_contact: secondOwnerFormData.contactNumber.toString(),
+            owner_two_dob: formatDate(secondOwnerDOB),
+            owner_two_ssn: secondOwnerTaxDetails.SSN.toString() || secondOwnerTaxDetails.EIN.toString(),
+            owner_two_percentage: (100 - ownershipPercentage).toString(),
+            owner_two_address: secondOwnerHomeAddress.unit + secondOwnerHomeAddress.street + secondOwnerHomeAddress.city + secondOwnerHomeAddress.state,
+            owner_two_city: secondOwnerHomeAddress.city,
+            owner_two_state: secondOwnerHomeAddress.state,
+            owner_two_zip: secondOwnerHomeAddress.zip.toString(),
+            owner_two_cs: location.state.creditScore.toString(),
+            business_address: address.unit + address.street + address.city + address.state,
+            business_city: address.city,
+            business_state: address.state,
+            business_zip: address.zip.toString(),
+            business_entity: businessEntity,
+            business_start_date: formatDate(registrationDate),
+            use_of_loan: loanPurpose,
+            company_name: prevFormData.businessName,
+            loan_amount: location.state.loanAmount.toString()
+        };
         e.preventDefault();
         try {
            const response = await axios.post('http://localhost:8000/form', formData, { withCredentials: true });

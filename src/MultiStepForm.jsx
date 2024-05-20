@@ -103,6 +103,16 @@ const MultiStepForm = () => {
         return formData.firstName && formData.lastName && formData.email && formData.contactNumber && formData.businessName && formData.agreement;
     };
 
+    const changeForm = () => {
+        navigate('/extended-form', {state: {
+            formData: formData,
+            loanAmount: loanAmount,
+            creditScore: creditScore,
+            monthlyRevenue: monthlyRevenue
+
+        }})
+    }
+
     return (
         <div className="form-container">
             <Typography variant="h6" align="center" gutterBottom className="title">
@@ -364,7 +374,7 @@ const MultiStepForm = () => {
                             <Typography variant="h5" align="center" gutterBottom>
                                 {message}
                             </Typography>
-                                <Button variant="contained" color="primary" className="next-button" onClick={() => navigate('/extended-form')}>
+                                <Button variant="contained" color="primary" className="next-button" onClick={changeForm}>
                                     Continue
                                 </Button>
                         </div>
