@@ -55,16 +55,27 @@
 }
 
 .time-period-button {
-    height: 56px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    color: #333;
+    height: 56px !important;
+    background-color: #e9edf2 !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    border: 1px solid #ccc !important;
+    color: #1e2a78 !important;
+    border-radius: 5px !important;
+    font-family: 'Montserrat' !important;
+
+}
+
+.time-period-button:hover {
+    background-color: #dae8fc !important;
+    box-shadow: #154192 !important;
+    border: 1px solid #154192 !important;
 }
 
 .time-period-button.selected {
-    background-color: #e0f0ff;
-    border-color: #1e2a78;
-    color: #1e2a78;
+    background-color: #e0f0ff !important;
+    border-color: #1e2a78 !important;
+    color: #1e2a78 !important;
 }
 
 .step-navigation {
@@ -87,8 +98,14 @@
     transition: background-color 0.3s ease !important;
 }
 
+.loan-next-button:disabled {
+    cursor: no-drop !important;
+    color: gray !important;
+}
+
 .loan-next-button:hover {
-    background-color: #c8d8f0 !important; /* Slightly darker on hover for visual feedback */
+    background-color: #154192 !important; /* Slightly darker on hover for visual feedback */
+    color: white !important;
 }
 
 .next-button, .back-button {
@@ -109,7 +126,10 @@
 }
 
 .sub-text {
-    color: #333;
+    color: #154192 !important;
+    font-family: 'Montserrat' !important;
+    font-size: 20px !important;
+    font-weight: 700 !important;
     margin-bottom: 20px;
 }
 

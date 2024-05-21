@@ -1,7 +1,6 @@
 // MultiStepForm.jsx
 import { useState } from 'react';
 import { TextField, Button, Stepper, Step, StepLabel, Typography, Grid, Checkbox, FormControlLabel } from '@mui/material';
-import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useNavigate } from 'react-router-dom';
@@ -25,6 +24,15 @@ const MultiStepForm = () => {
     });
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState('');
+    const [errors, setErrors] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        contactNumber: '',
+        businessName: '',
+        agreement: ''
+    });
+
     // eslint-disable-next-line no-unused-vars
     const [preApproved, setPreApproved] = useState(false);
 
@@ -63,20 +71,92 @@ const MultiStepForm = () => {
         handleNext()
     };
 
-    const handleInputChange = (e) => {
-        const { name, value, type, checked } = e.target;
+    const handlePhoneInputChange = (event) => {
+        const input = event.target.value.replace(/\D/g, ''); // Remove non-digit characters
+        let formattedInput = '';
+        let errorMessage = '';
+    
+        // Break the string into parts and format
+        if (input.length > 0) {
+            formattedInput += `(${input.substring(0, 3)}`; // Area code
+        }
+        if (input.length >= 4) {
+            formattedInput += `) ${input.substring(3, 6)}`; // Prefix
+        }
+        if (input.length > 6) {
+            formattedInput += `-${input.substring(6, 10)}`; // Line number
+        }
+    
+        // Validate phone number length
+        if (input.length < 10) {
+            errorMessage = 'Complete phone number required';
+        }
+    
+        // Update state
         setFormData({
             ...formData,
-            [name]: type === 'checkbox' ? checked : value,
+            contactNumber: formattedInput
+        });
+    
+        // Set or clear error message
+        setErrors({
+            ...errors,
+            contactNumber: errorMessage
+        });
+    };
+    
+    const validatePhoneInputOnBlur = () => {
+        const errorMessage = formData.contactNumber.length < 14 ? 'Complete phone number required' : '';
+        setErrors({
+            ...errors,
+            contactNumber: errorMessage
+        });
+    };
+    
+
+    const validateField = (name, value) => {
+        switch (name) {
+            case 'firstName':
+            case 'lastName':
+            case 'businessName':
+                if (!value.trim()) {
+                    return 'This field cannot be empty';
+                }
+                break;
+            case 'email':
+                if (!/\S+@\S+\.\S+/.test(value)) {
+                    return 'Please enter a valid email address';
+                }
+                break;
+            case 'contactNumber':
+                if (!/^\(\d{3}\) \d{3}-\d{4}$/.test(value)) {
+                    return 'Please enter a valid phone number (e.g., (123) 456-7890)';
+                }
+                break;
+            default:
+                return '';
+        }
+        return '';
+    }
+
+
+    const handleInputChange = (e) => {
+        const { name, value, type, checked } = e.target;
+
+        // Set the form data
+        setFormData({
+            ...formData,
+            [name]: type === 'checkbox' ? checked : value
+        });
+
+        // Validate the field and update the error state
+        const error = validateField(name, value);
+        setErrors({
+            ...errors,
+            [name]: error
         });
     };
 
-    const handlePhoneChange = (value) => {
-        setFormData({
-            ...formData,
-            contactNumber: value,
-        });
-    };
 
     const handleSubmit = async () => {
         setLoading(true);
@@ -107,8 +187,9 @@ const MultiStepForm = () => {
     };
 
     const isStep4Valid = () => {
-        return formData.firstName && formData.lastName && formData.email && formData.contactNumber && formData.businessName && formData.agreement;
+        return Object.values(formData).every(value => value) && Object.values(errors).every(error => !error);
     };
+
 
     const changeForm = () => {
         navigate('/extended-form', {
@@ -157,6 +238,7 @@ const MultiStepForm = () => {
                                 value={loanAmount}
                                 onChange={handleLoanAmountChange}
                                 fullWidth
+                                placeholder='25,000'
                                 margin="normal"
                                 InputProps={{
                                     startAdornment: <span className="dollar-sign">$</span>,
@@ -165,7 +247,7 @@ const MultiStepForm = () => {
                             />
 
                             <div className="step-navigation">
-                                <Button variant="contained" onClick={handleNext} className="loan-next-button">
+                                <Button variant="contained" onClick={handleNext} className="loan-next-button" disabled={!loanAmount}>
                                     Next
                                 </Button>
                             </div>
@@ -199,10 +281,10 @@ const MultiStepForm = () => {
                                 ))}
                             </Grid>
                             <div className="step-navigation">
-                                <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
+                                <Button variant="contained" color="secondary" onClick={handleBack} className="loan-next-button">
                                     Back
                                 </Button>
-                                <Button
+                                {/* <Button
                                     variant="contained"
                                     color="primary"
                                     onClick={handleNext}
@@ -210,7 +292,7 @@ const MultiStepForm = () => {
                                     disabled={!timePeriod}
                                 >
                                     Next
-                                </Button>
+                                </Button> */}
                             </div>
                         </div>
                     )}
@@ -244,10 +326,10 @@ const MultiStepForm = () => {
                                 ))}
                             </Grid>
                             <div className="step-navigation">
-                                <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
+                                <Button variant="contained" color="secondary" onClick={handleBack} className="loan-next-button">
                                     Back
                                 </Button>
-                                <Button
+                                {/* <Button
                                     variant="contained"
                                     color="primary"
                                     onClick={handleNext}
@@ -255,7 +337,7 @@ const MultiStepForm = () => {
                                     disabled={!monthlyRevenue}
                                 >
                                     Next
-                                </Button>
+                                </Button> */}
                             </div>
                         </div>
                     )}
@@ -287,10 +369,10 @@ const MultiStepForm = () => {
                                 ))}
                             </Grid>
                             <div className="step-navigation">
-                                <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
+                                <Button variant="contained" color="secondary" onClick={handleBack} className="loan-next-button">
                                     Back
                                 </Button>
-                                <Button
+                                {/* <Button
                                     variant="contained"
                                     color="primary"
                                     onClick={handleNext}
@@ -298,7 +380,7 @@ const MultiStepForm = () => {
                                     disabled={!creditScore}
                                 >
                                     Next
-                                </Button>
+                                </Button> */}
                             </div>
                         </div>
                     )}
@@ -319,6 +401,9 @@ const MultiStepForm = () => {
                                         onChange={handleInputChange}
                                         fullWidth
                                         margin="normal"
+                                        onBlur={handleInputChange} // Validate on blur
+                                        error={!!errors.firstName}
+                                        helperText={errors.firstName && 'This field cannot be empty'}
                                     />
                                 </Grid>
                                 <Grid item xs={6}>
@@ -329,6 +414,9 @@ const MultiStepForm = () => {
                                         onChange={handleInputChange}
                                         fullWidth
                                         margin="normal"
+                                        onBlur={handleInputChange} // Validate on blur
+                                        error={!!errors.lastName}
+                                        helperText={errors.lastName && 'This field cannot be empty'}
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
@@ -339,15 +427,29 @@ const MultiStepForm = () => {
                                         onChange={handleInputChange}
                                         fullWidth
                                         margin="normal"
+                                        onBlur={handleInputChange} // Validate on blur
+                                        error={!!errors.email}
+                                        helperText={errors.email && 'This field cannot be empty'}
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
-                                    <PhoneInput
-                                        country={'us'}
-                                        value={formData.contactNumber}
-                                        onChange={handlePhoneChange}
-                                        inputStyle={{ width: '100%' }}
-                                    />
+                                    <Grid item xs={12}>
+                                        <TextField
+                                            label="Contact Number"
+                                            name="contactNumber"
+                                            value={formData.contactNumber}
+                                            onChange={handlePhoneInputChange}
+                                            fullWidth
+                                            margin="normal"
+                                            onBlur={validatePhoneInputOnBlur} // Validate on blur
+                                            error={!!errors.contactNumber}
+                                            helperText={errors.contactNumber}
+                                            inputProps={{
+                                                maxLength: 14 // Limit input length to fit formatted number
+                                            }}
+                                        />
+                                    </Grid>
+
                                 </Grid>
                                 <Grid item xs={12}>
                                     <TextField
@@ -357,6 +459,9 @@ const MultiStepForm = () => {
                                         onChange={handleInputChange}
                                         fullWidth
                                         margin="normal"
+                                        onBlur={handleInputChange} // Validate on blur
+                                        error={!!errors.businessName}
+                                        helperText={errors.businessName && 'This field cannot be empty'}
                                     />
                                 </Grid>
                             </Grid>
@@ -367,10 +472,10 @@ const MultiStepForm = () => {
                                 className="agreement-checkbox"
                             />
                             <div className="step-navigation">
-                                <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
+                                {/* <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
                                     Back
-                                </Button>
-                                <Button variant="contained" color="primary" onClick={handleSubmit} className="next-button" disabled={!isStep4Valid()}>
+                                </Button> */}
+                                <Button variant="contained" color="primary" onClick={handleSubmit} className="loan-next-button" disabled={!isStep4Valid()}>
                                     Get Loan Offers
                                 </Button>
                             </div>
