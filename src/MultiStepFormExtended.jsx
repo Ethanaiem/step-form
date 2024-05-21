@@ -234,14 +234,14 @@ const MultiStepFormExtended = () => {
         };
         e.preventDefault();
         try {
-           const response = await axios.post('https://us-central1-ethan-klendify.cloudfunctions.net/api/form', formData, { withCredentials: true });
-           window.location.href = response.data.url; // Redirect to the DocuSign signing ceremony
+            const response = await axios.post('https://us-central1-ethan-klendify.cloudfunctions.net/api/form', formData, { withCredentials: true });
+            window.location.href = response.data.url; // Redirect to the DocuSign signing ceremony
         } catch (error) {
-           console.error('Error submitting form', error);
-        }finally {
+            console.error('Error submitting form', error);
+        } finally {
             setIsLoading(false); // End loading whether successful or not
         }
-     };
+    };
 
     useEffect(() => {
         setIsFormValid(isStepValid(activeStep));
