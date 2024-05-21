@@ -1,14 +1,18 @@
 /* MultiStepForm.css */
+* {
+    font-family: "Montserrat", sans-serif !important;
+}
+
 .form-container {
     width: 40% !important;
     margin: auto !important;
     margin-top: 50px !important;
     text-align: center !important;
-    font-family: 'Arial', sans-serif !important;
+    font-family: "Montserrat", sans-serif !important;
 }
 
 .title {
-    font-family: 'Montserrat' !important;
+    font-family: "Montserrat", sans-serif !important;
     font-size: 18px !important;
     font-weight: bold !important;
     color: #1e2a78 !important;
@@ -17,7 +21,7 @@
 
 .subtitle {
     font-size: 32px !important;
-    font-family: 'Montserrat' !important;
+    font-family: "Montserrat", sans-serif !important;
     font-weight: 600 !important;
     color: #333 !important;
     margin-bottom: 20px !important;
@@ -32,7 +36,7 @@
 }
 
 .step-title {
-    font-family: 'Montserrat' !important;
+    font-family: "Montserrat", sans-serif !important;
     font-size: 52px !important;
     font-weight: bold !important;
     color: #333 !important;
@@ -40,7 +44,14 @@
 }
 
 .loan-amount-input {
-    font-size: 24px !important;
+    font-size: 28px !important;
+    font-family: "Montserrat", sans-serif !important;
+    font-weight: 600;
+}
+
+.loan-amount-input::placeholder {
+    color: #1e2a78 !important;
+    font-weight: 600;
 }
 
 .dollar-sign {
@@ -62,7 +73,7 @@
     border: 1px solid #ccc !important;
     color: #1e2a78 !important;
     border-radius: 5px !important;
-    font-family: 'Montserrat' !important;
+    font-family: "Montserrat", sans-serif !important;
 
 }
 
@@ -85,13 +96,16 @@
 }
 
 .loan-next-button {
-    font-family: 'Montserrat' !important;
-    background-color: #dae8fc !important; /* Light blue background */
-    color: #333 !important; /* Dark text color for contrast */
+    font-family: "Montserrat", sans-serif !important;
+    background-color: #dae8fc !important;
+    /* Light blue background */
+    color: #333 !important;
+    /* Dark text color for contrast */
     border: none !important;
     width: 100% !important;
     padding: 10px 20px !important;
-    border-radius: 5px !important; /* Rounded corners */
+    border-radius: 5px !important;
+    /* Rounded corners */
     font-size: 20px !important;
     font-weight: 600 !important;
     cursor: pointer !important;
@@ -104,11 +118,13 @@
 }
 
 .loan-next-button:hover {
-    background-color: #154192 !important; /* Slightly darker on hover for visual feedback */
+    background-color: #154192 !important;
+    /* Slightly darker on hover for visual feedback */
     color: white !important;
 }
 
-.next-button, .back-button {
+.next-button,
+.back-button {
     background-color: #154192 !important;
     color: #fff !important;
     font-weight: bold;
@@ -127,7 +143,7 @@
 
 .sub-text {
     color: #154192 !important;
-    font-family: 'Montserrat' !important;
+    font-family: "Montserrat", sans-serif !important;
     font-size: 20px !important;
     font-weight: 700 !important;
     margin-bottom: 20px;
@@ -145,5 +161,3 @@
     justify-content: center;
     margin-top: 50px;
 }
-
-
