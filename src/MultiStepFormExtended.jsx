@@ -152,9 +152,9 @@ const MultiStepFormExtended = () => {
             }
             // For other fields, return the value as is (allowing text input)
             return formattedValue;
-        };
+        }
 
-
+    }
         // const formatValue = (value, name) => {
         //     // Remove any non-digit characters
         //     let formattedValue = value.replace(/\D/g, '');
@@ -1158,5 +1158,4 @@ const MultiStepFormExtended = () => {
             </div>
         );
     };
-}
 export default MultiStepFormExtended;
