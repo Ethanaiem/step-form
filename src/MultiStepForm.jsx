@@ -37,7 +37,8 @@ const MultiStepForm = () => {
         businessName: '',
         // agreement: ''
     });
-
+    const [taxDetails, setTaxDetails] = useState({ SSN: '', });
+    const [errorMessages, setErrorMessages] = useState({ SSN: '', });
     // eslint-disable-next-line no-unused-vars
     const [preApproved, setPreApproved] = useState(false);
     const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
@@ -120,7 +121,6 @@ const MultiStepForm = () => {
         });
     };
 
-
     const validateField = (name, value) => {
         switch (name) {
             case 'firstName':
@@ -140,11 +140,17 @@ const MultiStepForm = () => {
                     return 'Please enter a valid phone number (e.g., (123) 456-7890)';
                 }
                 break;
+            case 'SSN':
+                if (!/^\d{3}-\d{2}-\d{4}$/.test(value)) {
+                    return 'Please enter a valid SSN (e.g., 123-45-6789)';
+                }
+                break;
             default:
                 return '';
         }
         return '';
-    }
+    };
+
 
 
     const handleInputChange = (e) => {
@@ -164,7 +170,36 @@ const MultiStepForm = () => {
         });
     };
 
+    const handleInputChangeSSN = (setter, errorSetter) => (event) => {
+        const { name, value } = event.target;
+        const formattedValue = formatValue(value, name); // Format the input value
+        setter(prevState => ({ ...prevState, [name]: formattedValue }));
 
+        // Validate SSN field
+        const error = validateField(name, formattedValue);
+        errorSetter(prevState => ({ ...prevState, [name]: error }));
+    };
+
+
+    const formatValue = (value, name) => {
+        // Remove any non-digit characters
+        let formattedValue = value.replace(/\D/g, '');
+
+        // Apply formatting based on input type
+        if (name === 'SSN') {
+            if (formattedValue.length > 9) {
+                formattedValue = formattedValue.slice(0, 9);
+            }
+            if (formattedValue.length <= 3) {
+                formattedValue = formattedValue;
+            } else if (formattedValue.length <= 5) {
+                formattedValue = `${formattedValue.slice(0, 3)}-${formattedValue.slice(3, 5)}`;
+            } else {
+                formattedValue = `${formattedValue.slice(0, 3)}-${formattedValue.slice(3, 5)}-${formattedValue.slice(5, 9)}`;
+            }
+        }
+        return formattedValue;
+    };
     const handleSubmit = async () => {
         setLoading(true);
         try {
@@ -177,6 +212,7 @@ const MultiStepForm = () => {
                     timePeriod,
                     monthlyRevenue,
                     creditScore,
+                    SSN: taxDetails.SSN,
                     ...formData
                 });
                 setMessage('You have been pre-approved successfully!');
@@ -194,7 +230,7 @@ const MultiStepForm = () => {
     };
 
     const isStep4Valid = () => {
-        return Object.values(formData).every(value => value) && Object.values(errors).every(error => !error);
+        return Object.values(formData).every(value => value) && Object.values(errors).every(error => !error) && !!taxDetails.SSN;
     };
 
 
@@ -215,10 +251,10 @@ const MultiStepForm = () => {
             <Typography align="center" gutterBottom className="title">
                 QUICK & FLEXIBLE BUSINESS LOANS
             </Typography>
-            <div style={{display:"flex",justifyContent:"center",}} >
-                <img src={img1} alt="" style={{width:"150px"}}  />
-                <img src={img2} alt=""  style={{width:"150px",margin:"0 20px"}} />
-                <img src={img3} alt="" style={{width:"150px"}}  />
+            <div style={{ display: "flex", justifyContent: "center", }} >
+                <img src={img1} alt="" style={{ width: "180px" }} />
+                <img src={img2} alt="" style={{ width: "180px", margin: "0 20px" }} />
+                <img src={img3} alt="" style={{ width: "180px" }} />
             </div>
             <Typography align="center" gutterBottom className="subtitle">
                 Get Pre-Qualified for Financing
@@ -270,7 +306,7 @@ const MultiStepForm = () => {
                             <Typography variant="h5" align="center" gutterBottom className="step-title">
                                 Business Operating Time
                             </Typography>
-                            <Grid container spacing={2}>
+                            <Grid container spacing={3}>
                                 {[
                                     "Less than 3 months",
                                     "3 - 5 months",
@@ -313,7 +349,7 @@ const MultiStepForm = () => {
                             <Typography variant="h5" align="center" gutterBottom className="step-title">
                                 Gross Monthly Revenue
                             </Typography>
-                            <Grid container spacing={2}>
+                            <Grid container spacing={3}>
                                 {[
                                     "Less than $1,000",
                                     "$1,000 - $5,000",
@@ -358,7 +394,7 @@ const MultiStepForm = () => {
                             <Typography variant="h5" align="center" gutterBottom className="step-title">
                                 Personal Credit Score
                             </Typography>
-                            <Grid container spacing={2}>
+                            <Grid container spacing={3}>
                                 {[
                                     "500 and Below",
                                     "500 - 549",
@@ -404,8 +440,8 @@ const MultiStepForm = () => {
                             <Typography variant="body1" align="center" gutterBottom className="sub-text">
                                 And get your loan offer now!
                             </Typography>
-                            <Grid container spacing={2}>
-                                <Grid item xs={6}>
+                            <Grid container spacing={0}>
+                                <Grid item xs={5.8} >
                                     <TextField
                                         label="First Name"
                                         name="firstName"
@@ -418,7 +454,7 @@ const MultiStepForm = () => {
                                         helperText={errors.firstName && 'This field cannot be empty'}
                                     />
                                 </Grid>
-                                <Grid item xs={6}>
+                                <Grid item xs={5.8} style={{marginLeft:'17px'}}>
                                     <TextField
                                         label="Last Name"
                                         name="lastName"
@@ -445,23 +481,20 @@ const MultiStepForm = () => {
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
-                                    <Grid item xs={12}>
-                                        <TextField
-                                            label="Contact Number"
-                                            name="contactNumber"
-                                            value={formData.contactNumber}
-                                            onChange={handlePhoneInputChange}
-                                            fullWidth
-                                            margin="normal"
-                                            onBlur={validatePhoneInputOnBlur} // Validate on blur
-                                            error={!!errors.contactNumber}
-                                            helperText={errors.contactNumber}
-                                            inputProps={{
-                                                maxLength: 14 // Limit input length to fit formatted number
-                                            }}
-                                        />
-                                    </Grid>
-
+                                    <TextField
+                                        label="Contact Number"
+                                        name="contactNumber"
+                                        value={formData.contactNumber}
+                                        onChange={handlePhoneInputChange}
+                                        fullWidth
+                                        margin="normal"
+                                        onBlur={validatePhoneInputOnBlur} // Validate on blur
+                                        error={!!errors.contactNumber}
+                                        helperText={errors.contactNumber}
+                                        inputProps={{
+                                            maxLength: 14 // Limit input length to fit formatted number
+                                        }}
+                                    />
                                 </Grid>
                                 <Grid item xs={12}>
                                     <TextField
@@ -475,6 +508,19 @@ const MultiStepForm = () => {
                                         error={!!errors.businessName}
                                         helperText={errors.businessName && 'This field cannot be empty'}
                                     />
+                                </Grid>
+                                <Grid item xs={12} style={{marginTop:"15px"}}>
+                                    <TextField
+                                        error={!!errorMessages.SSN}
+                                        label="SSN"
+                                        variant="outlined"
+                                        name="SSN"
+                                        value={taxDetails.SSN}
+                                        onChange={handleInputChangeSSN(setTaxDetails, setErrorMessages)}
+                                        fullWidth
+                                        required
+                                    />
+                                    {errorMessages.SSN && <Typography variant="caption" color="error">{errorMessages.SSN}</Typography>}
                                 </Grid>
                             </Grid>
                             {/* <FormControlLabel
