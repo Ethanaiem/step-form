@@ -1,29 +1,24 @@
-import { useEffect, useState } from 'react';
-import { TextField, Button, Stepper, Step, StepLabel, Typography, Grid, Slider, Checkbox, FormControlLabel } from '@mui/material';
+import { useEffect, useState, useMemo } from 'react';
+import { TextField, Button, Stepper, Typography, Grid } from '@mui/material';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import PhoneInput from 'react-phone-input-2';
 import { LinearProgress } from '@mui/material';
 import 'react-phone-input-2/lib/style.css';
-import InputMask from 'react-input-mask';
 import dayjs from 'dayjs';
 import axios from 'axios';
 import { useLocation } from 'react-router-dom';
-import { CircularProgress } from '@mui/material';
 
 import './MultiStepFormExtended.css';
-import secureImage from './assets/secure.png';
-import trustedImage from './assets/trusted.png';
 
 const MultiStepFormExtended = () => {
     const [activeStep, setActiveStep] = useState(0);
     const [businessEntity, setBusinessEntity] = useState('');
     const [isSoleOwner, setIsSoleOwner] = useState(null);
     const [loanPurpose, setLoanPurpose] = useState('');
-    const [ownershipPercentage, setOwnershipPercentage] = useState(0); // Default to 50% for demo
+    const [ownershipPercentage, setOwnershipPercentage] = useState(100);
     const [addSecondOwner, setAddSecondOwner] = useState(false);
-    const [secondOwnerFormData, setSecondOwnerFormData] = useState({ firstName: '', lastName: '', email: '', contactNumber: '', agreement: false, });
+    const [secondOwnerFormData, setSecondOwnerFormData] = useState({ firstName: '', lastName: '', email: '', contactNumber: '' });
     const [address, setAddress] = useState({ unit: '', street: '', city: '', state: '', zip: '' });
     const [homeAddress, setHomeAddress] = useState({ unit: '', street: '', city: '', state: '', zip: '' });
     const [secondOwnerHomeAddress, setSecondOwnerHomeAddress] = useState({ unit: '', street: '', city: '', state: '', zip: '' });
@@ -42,9 +37,30 @@ const MultiStepFormExtended = () => {
     const [errorMessages, setErrorMessages] = useState({ SSN: '', ITIN: '', EIN: '' });
     const location = useLocation();
     const [prevFormData, setPrevFormData] = useState(null)
-    const totalSteps = steps.length;
-    const progress = (activeStep / (totalSteps - 1)) * 100;
+    const totalSteps = useMemo(() => {
+        if (isSoleOwner) {
+            return 10
+        } else if (!addSecondOwner) {
+            return 12
+        } else if (!isSoleOwner && addSecondOwner) {
+            return 16
+        }
+    }, [isSoleOwner]);
+    // const progress = (activeStep / (totalSteps)) * 100;
     const [isLoading, setIsLoading] = useState(false);
+    const [secondOwnerCreditScore, setSecondOwnerCreditScore] = useState('');
+    const [errors, setErrors] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        contactNumber: '',
+        businessName: '',
+        // agreement: ''
+    });
+    // Calculate progress
+    const progress = useMemo(() => {
+        return (activeStep / Math.max(totalSteps - 1, 1)) * 100; // Avoid division by zero
+    }, [activeStep, totalSteps]);
     useEffect(() => {
         const data = location.state?.formData
         setPrevFormData(data)
@@ -60,16 +76,14 @@ const MultiStepFormExtended = () => {
             return prevActiveStep + 1;
         });
     };
-
+    const handleCreditScoreSelect = (score) => {
+        setSecondOwnerCreditScore(score);
+        handleNext()
+    };
     const handleBack = () => {
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
     };
-    const handlePhoneChange = (value) => {
-        setSecondOwnerFormData({
-            ...secondOwnerFormData,
-            contactNumber: value,
-        });
-    };
+
     const handleBusinessEntitySelect = (entity) => {
         setBusinessEntity(entity);
         handleNext()
@@ -110,18 +124,18 @@ const MultiStepFormExtended = () => {
         errorSetter(prevState => ({ ...prevState, [name]: errorMessage }));
     };
 
-
-
     const formatValue = (value, name) => {
-        // Remove any non-digit characters
-        let formattedValue = value.replace(/\D/g, '');
+        let formattedValue = value;
 
-        // Apply formatting based on input type
+        // Only modify the formatting for specific fields
         if (name === 'SSN' || name === 'ITIN') {
+            // Remove non-digit characters for SSN and ITIN only
+            formattedValue = formattedValue.replace(/\D/g, '');
             if (formattedValue.length > 9) {
                 formattedValue = formattedValue.slice(0, 9);
             }
             if (formattedValue.length <= 3) {
+                // eslint-disable-next-line no-self-assign
                 formattedValue = formattedValue;
             } else if (formattedValue.length <= 5) {
                 formattedValue = `${formattedValue.slice(0, 3)}-${formattedValue.slice(3, 5)}`;
@@ -129,17 +143,51 @@ const MultiStepFormExtended = () => {
                 formattedValue = `${formattedValue.slice(0, 3)}-${formattedValue.slice(3, 5)}-${formattedValue.slice(5, 9)}`;
             }
         } else if (name === 'EIN') {
+            // Remove non-digit characters for EIN only
+            formattedValue = formattedValue.replace(/\D/g, '');
             if (formattedValue.length > 9) {
                 formattedValue = formattedValue.slice(0, 9);
             }
             if (formattedValue.length <= 2) {
+                // eslint-disable-next-line no-self-assign
                 formattedValue = formattedValue;
             } else {
                 formattedValue = `${formattedValue.slice(0, 2)}-${formattedValue.slice(2, 9)}`;
             }
         }
+        // For other fields, return the value as is (allowing text input)
         return formattedValue;
     };
+
+
+    // const formatValue = (value, name) => {
+    //     // Remove any non-digit characters
+    //     let formattedValue = value.replace(/\D/g, '');
+
+    //     // Apply formatting based on input type
+    //     if (name === 'SSN' || name === 'ITIN') {
+    //         if (formattedValue.length > 9) {
+    //             formattedValue = formattedValue.slice(0, 9);
+    //         }
+    //         if (formattedValue.length <= 3) {
+    //             formattedValue = formattedValue;
+    //         } else if (formattedValue.length <= 5) {
+    //             formattedValue = `${formattedValue.slice(0, 3)}-${formattedValue.slice(3, 5)}`;
+    //         } else {
+    //             formattedValue = `${formattedValue.slice(0, 3)}-${formattedValue.slice(3, 5)}-${formattedValue.slice(5, 9)}`;
+    //         }
+    //     } else if (name === 'EIN') {
+    //         if (formattedValue.length > 9) {
+    //             formattedValue = formattedValue.slice(0, 9);
+    //         }
+    //         if (formattedValue.length <= 2) {
+    //             formattedValue = formattedValue;
+    //         } else {
+    //             formattedValue = `${formattedValue.slice(0, 2)}-${formattedValue.slice(2, 9)}`;
+    //         }
+    //     }
+    //     return formattedValue;
+    // };
 
 
 
@@ -171,6 +219,20 @@ const MultiStepFormExtended = () => {
             setIsFormValid(true);
         }
     };
+    const handleSecondDobDateChange = (newValue) => {
+        setSecondOwnerDOB(newValue)
+        const now = dayjs();
+        const dob = dayjs(newValue);
+        const age = now.diff(dob, 'year');
+
+        if (age < 18) {
+            setErrorMessage('User must be 18 years or above');
+            setIsFormValid(false);
+        } else {
+            setErrorMessage('');
+            setIsFormValid(true);
+        }
+    };
 
     // const handleSliderChange = (event, newValue) => {
     //     setOwnershipPercentage(newValue);
@@ -187,9 +249,9 @@ const MultiStepFormExtended = () => {
     const isStepValid = (step) => {
         switch (step) {
             case 1:
-                return address.city && address.state && address.street && address.unit && address.zip && taxDetails.SSN && !errorMessages.SSN;
+                return address.city && address.state && address.street && address.unit && address.zip && taxDetails.EIN && !errorMessages.EIN;
             case 4:
-                return homeAddress.city && homeAddress.state && homeAddress.street && homeAddress.unit && homeAddress.zip && taxDetails.EIN && !errorMessages.EIN && taxDetails.ITIN && !errorMessages.ITIN;
+                return homeAddress.city && homeAddress.state && homeAddress.street && homeAddress.unit && homeAddress.zip && (taxDetails.SSN && !errorMessages.SSN || taxDetails.ITIN && !errorMessages.ITIN);
             case 5:
                 return dateOfBirth && !errorMessage;
             // case 6:
@@ -197,16 +259,18 @@ const MultiStepFormExtended = () => {
             case 11:
                 return secondOwnerHomeAddress.city && secondOwnerHomeAddress.state && secondOwnerHomeAddress.street && secondOwnerHomeAddress.unit && secondOwnerHomeAddress.zip;
             case 10:
-                return secondOwnerFormData.firstName && secondOwnerFormData.lastName && secondOwnerFormData.email && secondOwnerFormData.contactNumber && secondOwnerFormData.agreement;
+                return secondOwnerFormData.firstName && secondOwnerFormData.lastName && secondOwnerFormData.email && secondOwnerFormData.contactNumber;
             case 12:
-                return secondOwnerTaxDetails.EIN && !errorMessages.EIN && (secondOwnerTaxDetails.SSN || secondOwnerTaxDetails.ITIN) && !errorMessages.SSN && !errorMessages.ITIN;
-
+                return secondOwnerDOB && !errorMessage;
             default:
                 return false;
         }
     };
 
     const formatDate = (date) => {
+        if (!date || date === 0) {
+            return '';  // Return empty string if date is zero or invalid
+        }
         const d = new Date(date);
         return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     };
@@ -214,13 +278,28 @@ const MultiStepFormExtended = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true); // Start loading
+        // Function to parse the monthly revenue string and extract the lower bound
+        const parseMonthlyRevenue = (monthlyRevenue) => {
+            if (monthlyRevenue.includes("-")) {
+                return parseInt(monthlyRevenue.split("-")[0].replace(/[$,\s]/g, ''));
+            } else if (monthlyRevenue.includes("Less than")) {
+                return parseInt(monthlyRevenue.replace(/Less than [$,\s]/g, ''));
+            } else if (monthlyRevenue.includes("+")) {
+                return parseInt(monthlyRevenue.replace(/[$,\s\+]/g, ''));
+            }
+            return parseInt(monthlyRevenue.replace(/[$,\s]/g, ''));
+        };
+
+        const monthlyRevenue = location.state.monthlyRevenue; // Assuming this is the selected revenue string
+        const annualRevenue = parseMonthlyRevenue(monthlyRevenue) * 12;
+        console.log(annualRevenue, "annual Revenue")
 
         const formData = {
             owner_one_name: prevFormData.firstName + prevFormData.lastName,
             owner_one_email: prevFormData.email,
             owner_one_contact: prevFormData.contactNumber.toString(),
             owner_one_dob: formatDate(dateOfBirth),
-            owner_one_ssn: taxDetails.SSN.toString() || taxDetails.EIN.toString(),
+            owner_one_ssn: taxDetails.SSN.toString() || taxDetails.ITIN.toString(),
             owner_one_percentage: ownershipPercentage.toString(),
             owner_one_address: homeAddress.unit + homeAddress.street + homeAddress.city + homeAddress.state,
             owner_one_city: homeAddress.city,
@@ -230,14 +309,14 @@ const MultiStepFormExtended = () => {
             owner_two_name: secondOwnerFormData.firstName + secondOwnerFormData.lastName,
             owner_two_email: secondOwnerFormData.email,
             owner_two_contact: secondOwnerFormData.contactNumber.toString(),
-            owner_two_dob: formatDate(secondOwnerDOB),
-            owner_two_ssn: secondOwnerTaxDetails.SSN.toString() || secondOwnerTaxDetails.EIN.toString(),
+            // owner_two_dob: formatDate(secondOwnerDOB),
+            owner_two_ssn: secondOwnerTaxDetails.SSN.toString() || secondOwnerTaxDetails.ITIN.toString(),
             owner_two_percentage: (100 - ownershipPercentage).toString(),
             owner_two_address: secondOwnerHomeAddress.unit + secondOwnerHomeAddress.street + secondOwnerHomeAddress.city + secondOwnerHomeAddress.state,
             owner_two_city: secondOwnerHomeAddress.city,
             owner_two_state: secondOwnerHomeAddress.state,
             owner_two_zip: secondOwnerHomeAddress.zip.toString(),
-            owner_two_cs: location.state.creditScore.toString(),
+            owner_two_cs: secondOwnerCreditScore.toString(),
             business_address: address.unit + address.street + address.city + address.state,
             business_city: address.city,
             business_state: address.state,
@@ -246,17 +325,66 @@ const MultiStepFormExtended = () => {
             business_start_date: formatDate(registrationDate),
             use_of_loan: loanPurpose,
             company_name: prevFormData.businessName,
-            loan_amount: location.state.loanAmount.toString()
+            loan_amount: location.state.loanAmount.toString(),
+            annual_revenue: annualRevenue.toString(),
+            business_ein: taxDetails.EIN.toString()
         };
+
+        if (secondOwnerDOB !== 0) {  // Only include if secondOwnerDOB is not zero
+            formData.owner_two_dob = formatDate(secondOwnerDOB);
+        }
         e.preventDefault();
         try {
-            const response = await axios.post('https://us-central1-ethan-klendify.cloudfunctions.net/api/form', formData, { withCredentials: true });
+            const response = await axios.post('http://localhost:8000/form', formData, { withCredentials: true });
             window.location.href = response.data.url; // Redirect to the DocuSign signing ceremony
         } catch (error) {
             console.error('Error submitting form', error);
         } finally {
             setIsLoading(false); // End loading whether successful or not
         }
+    };
+
+    const handlePhoneInputChange = (event) => {
+        const input = event.target.value.replace(/\D/g, ''); // Remove non-digit characters
+        let formattedInput = '';
+        let errorMessage = '';
+
+        // Break the string into parts and format
+        if (input.length > 0) {
+            formattedInput += `(${input.substring(0, 3)}`; // Area code
+        }
+        if (input.length >= 4) {
+            formattedInput += `) ${input.substring(3, 6)}`; // Prefix
+        }
+        if (input.length > 6) {
+            formattedInput += `-${input.substring(6, 10)}`; // Line number
+        }
+
+        // Validate phone number length
+        if (input.length < 10) {
+            errorMessage = 'Complete phone number required';
+        }
+
+        // Update state
+        setSecondOwnerFormData({
+            ...secondOwnerFormData,
+            contactNumber: formattedInput
+        });
+
+        // Set or clear error message
+        setErrors({
+            ...errors,
+            contactNumber: errorMessage
+        });
+    };
+
+
+    const validatePhoneInputOnBlur = () => {
+        const errorMessage = secondOwnerFormData.contactNumber.length < 14 ? 'Complete phone number required' : '';
+        setErrors({
+            ...errors,
+            contactNumber: errorMessage
+        });
     };
 
     useEffect(() => {
@@ -310,17 +438,19 @@ const MultiStepFormExtended = () => {
 
                             </Grid>
                         ))}
+                        <Grid item xs={12}>
+                            <TextField
+                                error={!!errorMessages.EIN}
+                                label="EIN"
+                                variant="outlined"
+                                name="EIN"
+                                value={taxDetails.EIN}
+                                onChange={handleInputChange(setTaxDetails, setErrorMessages)}
+                                fullWidth
+                                required
+                            />
+                        </Grid>
                     </Grid>
-                    <TextField
-                        error={!!errorMessages.SSN}
-                        label="SSN"
-                        variant="outlined"
-                        name="SSN"
-                        value={taxDetails.SSN}
-                        onChange={handleInputChange(setTaxDetails, setErrorMessages)}
-                        fullWidth
-                        required
-                    />
                     <div className="step-navigation">
                         <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
                             Back
@@ -415,26 +545,31 @@ const MultiStepFormExtended = () => {
                                 <TextField label={key.charAt(0).toUpperCase() + key.slice(1)} name={key} value={value} onChange={handleInputChange(setHomeAddress, setErrorMessages)} fullWidth margin="normal" required />
                             </Grid>
                         ))}
-                        <TextField
-                            error={!!errorMessages.EIN}
-                            label="EIN"
-                            variant="outlined"
-                            name="EIN"
-                            value={taxDetails.EIN}
-                            onChange={handleInputChange(setTaxDetails, setErrorMessages)}
-                            fullWidth
-                            required
-                        />
-                        <TextField
-                            error={!!errorMessages.ITIN}
-                            label="ITIN"
-                            variant="outlined"
-                            name="ITIN"
-                            value={taxDetails.ITIN}
-                            onChange={handleInputChange(setTaxDetails, setErrorMessages)}
-                            fullWidth
-                            required
-                        />
+                        <Grid item xs={12}>
+                            <TextField
+                                error={!!errorMessages.SSN}
+                                label="SSN"
+                                variant="outlined"
+                                name="SSN"
+                                value={taxDetails.SSN}
+                                onChange={handleInputChange(setTaxDetails, setErrorMessages)}
+                                fullWidth
+                                required
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                error={!!errorMessages.ITIN}
+                                label="ITIN"
+                                variant="outlined"
+                                name="ITIN"
+                                value={taxDetails.ITIN}
+                                onChange={handleInputChange(setTaxDetails, setErrorMessages)}
+                                fullWidth
+                                required
+                            />
+                        </Grid>
+
                     </Grid>
 
                     <div className="step-navigation">
@@ -536,37 +671,40 @@ const MultiStepFormExtended = () => {
                 </div>
             )}
             {activeStep === 8 && !isSoleOwner && (
-    <div className="step-content">
-        <Typography variant="h5" align="center" gutterBottom>
-            What percentage of ownership do you have?
-        </Typography>
-        <Typography gutterBottom>
-            Enter Ownership Percentage (0-100%)
-        </Typography>
-        <TextField
-            type="number"
-            value={ownershipPercentage}
-            onChange={(e) => {
-                const value = parseInt(e.target.value);
-                if (!isNaN(value) && value >= 0 && value <= 100) {
-                    setOwnershipPercentage(value);
-                }
-            }}
-            label="Ownership Percentage"
-            variant="outlined"
-            fullWidth
-            inputProps={{ min: '', max: 100 }}
-        />
-        <div className="step-navigation">
-            <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
-                Back
-            </Button>
-            <Button variant="contained" color="primary" onClick={handleNext} className="next-button">
-                Next
-            </Button>
-        </div>
-    </div>
-)}
+                <div className="step-content">
+                    <Typography variant="h5" align="center" gutterBottom>
+                        What percentage of ownership do you have?
+                    </Typography>
+                    <Typography gutterBottom>
+                        Enter Ownership Percentage (0-100%)
+                    </Typography>
+                    <TextField
+                        type="number"
+                        value={ownershipPercentage}
+                        onChange={(e) => {
+                            const value = e.target.value;  // Capture the string value from the input
+                            const numericValue = parseInt(value);  // Convert the string to a number
+                            if (value === '') {
+                                setOwnershipPercentage('');  // Allow the field to be empty
+                            } else if (!isNaN(numericValue) && numericValue >= 0 && numericValue <= 100) {
+                                setOwnershipPercentage(numericValue);  // Update only if the value is between 0 and 100
+                            }
+                        }}
+                        label="Ownership Percentage"
+                        variant="outlined"
+                        fullWidth
+                        inputProps={{ min: 0, max: 100 }}
+                    />
+                    <div className="step-navigation">
+                        <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
+                            Back
+                        </Button>
+                        <Button variant="contained" color="primary" onClick={handleNext} className="next-button">
+                            Next
+                        </Button>
+                    </div>
+                </div>
+            )}
 
 
             {activeStep === 8 && isSoleOwner && (
@@ -740,20 +878,22 @@ const MultiStepFormExtended = () => {
                             />
                         </Grid>
                         <Grid item xs={12}>
-                            <PhoneInput
-                                country={'us'}
+                            <TextField
+                                label="Contact Number"
+                                name="contactNumber"
                                 value={secondOwnerFormData.contactNumber}
-                                onChange={handlePhoneChange}
-                                inputStyle={{ width: '100%' }}
+                                onChange={handlePhoneInputChange}
+                                fullWidth
+                                margin="normal"
+                                onBlur={validatePhoneInputOnBlur} // Validate on blur
+                                error={!!errors.contactNumber}
+                                helperText={errors.contactNumber}
+                                inputProps={{
+                                    maxLength: 14 // Limit input length to fit formatted number
+                                }}
                             />
                         </Grid>
                     </Grid>
-                    <FormControlLabel
-                        control={<Checkbox name="agreement" checked={secondOwnerFormData.agreement} onChange={handleSecondInputChange} />}
-                        // eslint-disable-next-line react/no-unescaped-entities
-                        label={<Typography variant="body2">By selecting "Get Loan Offers" you agree to our <a href="#privacy-policy">Privacy Policy</a>.</Typography>}
-                        className="agreement-checkbox"
-                    />
                     <div className="step-navigation">
                         <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
                             Back
@@ -783,6 +923,30 @@ const MultiStepFormExtended = () => {
                                 />
                             </Grid>
                         ))}
+                        <Grid item xs={12}>
+                            <TextField
+                                error={!!errorMessages.SSN}
+                                label="SSN"
+                                variant="outlined"
+                                name="SSN"
+                                value={secondOwnerTaxDetails.SSN}
+                                onChange={handleInputChange(setSecondOwnerTaxDetails, setErrorMessages)}
+                                fullWidth
+                                required
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                error={!!errorMessages.ITIN}
+                                label="ITIN"
+                                variant="outlined"
+                                name="ITIN"
+                                value={secondOwnerTaxDetails.ITIN}
+                                onChange={handleInputChange(setSecondOwnerTaxDetails, setErrorMessages)}
+                                fullWidth
+                                required
+                            />
+                        </Grid>
                     </Grid>
                     <div className="step-navigation">
                         <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
@@ -794,7 +958,7 @@ const MultiStepFormExtended = () => {
                     </div>
                 </div>
             )}
-            {activeStep === 12 && !isSoleOwner && addSecondOwner && (
+            {/* {activeStep === 12 && !isSoleOwner && addSecondOwner && (
                 <div className="step-content">
                     <Typography variant="h5" align="center" gutterBottom>
                         Second Owner Tax Details
@@ -828,9 +992,9 @@ const MultiStepFormExtended = () => {
                         <img src={trustedImage} alt="Image 2" style={{ width: '20%' }} />
                     </div>
                 </div>
-            )}
-            {activeStep === 13 && !isSoleOwner && addSecondOwner && (
-                <div className="step-content">
+            )} */}
+            {activeStep === 12 && !isSoleOwner && addSecondOwner && (
+                <div className="step-content-date">
                     <Typography variant="h5" align="center" gutterBottom>
                         Second Owner Date of Birth
                     </Typography>
@@ -840,15 +1004,57 @@ const MultiStepFormExtended = () => {
                             label="Date"
                             name='secondOwnerDOB'
                             value={secondOwnerDOB}
-                            onChange={(newValue) => handleDateChange(setSecondOwnerDOB, newValue)}
+                            onChange={(newValue) => handleSecondDobDateChange(newValue)}
                             renderInput={(params) => <TextField {...params} fullWidth />}
                         />
                     </LocalizationProvider>
+                    {errorMessage && (
+                        <Typography variant="body2" color="error" align="center">
+                            {errorMessage}
+                        </Typography>
+                    )}
                     <div className="step-navigation">
                         <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
                             Back
                         </Button>
-                        <Button variant="contained" color="primary" onClick={handleNext} className="next-button" disabled={!dateOfBirth}>
+                        <Button variant="contained" color="primary" onClick={handleNext} className="next-button" disabled={!isStepValid(12)}>
+                            Next
+                        </Button>
+                    </div>
+                </div>
+            )}
+            {activeStep === 13 && !isSoleOwner && addSecondOwner && (
+                <div className="step-content">
+                    <Typography variant="h5" align="center" gutterBottom className="step-title">
+                        Personal Credit Score
+                    </Typography>
+                    <Grid container spacing={2}>
+                        {[
+                            "500 and Below",
+                            "500 - 549",
+                            "550 - 599",
+                            "600 - 649",
+                            "650 - 719",
+                            "720 or Above",
+                            "Not Sure",
+                        ].map((score) => (
+                            <Grid item xs={6} key={score}>
+                                <Button
+                                    variant="outlined"
+                                    fullWidth
+                                    className={`time-period-button ${secondOwnerCreditScore === score ? 'selected' : ''}`}
+                                    onClick={() => handleCreditScoreSelect(score)}
+                                >
+                                    {score}
+                                </Button>
+                            </Grid>
+                        ))}
+                    </Grid>
+                    <div className="step-navigation">
+                        <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
+                            Back
+                        </Button>
+                        <Button variant="contained" color="primary" onClick={handleNext} className="next-button" disabled={!secondOwnerCreditScore}>
                             Next
                         </Button>
                     </div>
