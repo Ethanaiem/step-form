@@ -5,7 +5,7 @@
     margin: auto;
     margin-top: 50px;
     text-align: center;
-    font-family: 'Arial', sans-serif;
+    font-family: "Montserrat", sans-serif !important;
 }
 
 .stepper {
@@ -23,7 +23,7 @@
 .stepper .MuiStepConnector-line {
     border-top-width: 2px;
     border-top-style: solid; /* Ensures the line is solid */
-    border-color: #1e2a78; /* Deep blue color for the line */
+    border-color: #154192; /* Deep blue color for the line */
 }
 
 .step-content {
@@ -46,8 +46,8 @@
 
 .business-entity-button.selected, .home-based-button.selected {
     background-color: #e0f0ff;
-    border-color: #1e2a78;
-    color: #1e2a78;
+    border-color:#154192;
+    color:#154192;
 }
 
 .step-navigation {
@@ -74,17 +74,20 @@
 /* Additional styles for step 9 */
 .step-content button {
     margin: 8px;
-    border-radius: 4px; /* Rounded corners for buttons */
+    border-radius: 10px; /* Rounded corners for buttons */
     box-shadow: none; /* Remove default MUI button shadows if needed */
+    padding: 32px !important;
 }
 
 .step-content button:hover {
-    background-color: #f0f0f0; /* Light grey background on hover */
+    /* background-color: #f0f0f0; Light grey background on hover */
+    background-color: #154192 !important;
+    color: #ffffff !important;
 }
 
 /* Ensure buttons are clearly readable and visually appealing */
-.step-content button {
-    height: 48px;
+.step-content button {  
+    height: 40px;
     font-size: 16px; /* Suitable font size for readability */
     color: #333; /* Dark font for better contrast */
     border: 1px solid #ccc; /* Subtle borders for buttons */
@@ -97,6 +100,6 @@
 
 /* Additional styles for the slider */
 .MuiSlider-root {
-    color: #1e2a78; /* Color for the slider thumb and track */
+    color: #154192; /* Color for the slider thumb and track */
     margin: 20px; /* Spacing around the slider for better interaction */
 }

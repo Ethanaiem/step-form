@@ -19,8 +19,10 @@
     "dayjs": "^1.11.11",
     "docusign-esign": "^6.5.1",
     "firebase": "^10.12.0",
+    "lottie-react": "^2.4.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-input-mask": "^2.0.4",
     "react-lottie": "^1.2.4",
     "react-phone-input-2": "^2.15.1",
     "react-router-dom": "^6.23.1"

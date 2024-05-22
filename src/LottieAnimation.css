@@ -1,0 +1,37 @@
+/* src/components/LottieAnimation.css */
+.animation-container {
+    position: relative;
+    width: 100%;
+    height:50vh;
+    overflow: hidden;
+}
+
+.lottie-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Adjust width and height to increase the size */
+    z-index: 1;
+    /* Ensure it is behind the image */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.foreground-image {
+    position: relative;
+    z-index: 2;
+    /* Ensure it is in front of the Lottie animation */
+    width: 100px;
+    /* Adjust size as needed */
+    height: auto;
+    /* Maintain aspect ratio */
+    display: block;
+    margin: 0 auto;
+    /* Center the image horizontally */
+    top: 35%;
+    /* transform: translateY(-50%); */
+    /* Center the image vertically */
+}

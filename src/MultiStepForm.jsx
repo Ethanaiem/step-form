@@ -1,12 +1,18 @@
 // MultiStepForm.jsx
 import { useState } from 'react';
-import { TextField, Button, Stepper, Step, StepLabel, Typography, Grid, Checkbox, FormControlLabel } from '@mui/material';
+import { TextField, Button, Stepper, Step, StepLabel, Typography, Grid } from '@mui/material';
 import 'react-phone-input-2/lib/style.css';
-import CircularProgress from '@mui/material/CircularProgress';
+
 import { useNavigate } from 'react-router-dom';
 import { db } from './firebase.config';
 import { collection, addDoc, getDocs, query, where } from 'firebase/firestore';
 import './MultiStepForm.css';
+import LottieAnimation from './LottieAnimation';
+import FinishingAnimation from './FinishingAnimation';
+
+import img1 from './assets/66398c2d1946fd86bce731bd_3.png'
+import img2 from './assets/66398c2d8e95b96249977819_1.png'
+import img3 from './assets/66398c2d8e95b9624997780c_2.png'
 
 const MultiStepForm = () => {
     const [activeStep, setActiveStep] = useState(0);
@@ -20,7 +26,7 @@ const MultiStepForm = () => {
         email: '',
         contactNumber: '',
         businessName: '',
-        agreement: false,
+        // agreement: false,
     });
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState('');
@@ -30,7 +36,7 @@ const MultiStepForm = () => {
         email: '',
         contactNumber: '',
         businessName: '',
-        agreement: ''
+        // agreement: ''
     });
 
     // eslint-disable-next-line no-unused-vars
@@ -75,7 +81,7 @@ const MultiStepForm = () => {
         const input = event.target.value.replace(/\D/g, ''); // Remove non-digit characters
         let formattedInput = '';
         let errorMessage = '';
-    
+
         // Break the string into parts and format
         if (input.length > 0) {
             formattedInput += `(${input.substring(0, 3)}`; // Area code
@@ -86,25 +92,25 @@ const MultiStepForm = () => {
         if (input.length > 6) {
             formattedInput += `-${input.substring(6, 10)}`; // Line number
         }
-    
+
         // Validate phone number length
         if (input.length < 10) {
             errorMessage = 'Complete phone number required';
         }
-    
+
         // Update state
         setFormData({
             ...formData,
             contactNumber: formattedInput
         });
-    
+
         // Set or clear error message
         setErrors({
             ...errors,
             contactNumber: errorMessage
         });
     };
-    
+
     const validatePhoneInputOnBlur = () => {
         const errorMessage = formData.contactNumber.length < 14 ? 'Complete phone number required' : '';
         setErrors({
@@ -112,7 +118,7 @@ const MultiStepForm = () => {
             contactNumber: errorMessage
         });
     };
-    
+
 
     const validateField = (name, value) => {
         switch (name) {
@@ -208,6 +214,11 @@ const MultiStepForm = () => {
             <Typography align="center" gutterBottom className="title">
                 QUICK & FLEXIBLE BUSINESS LOANS
             </Typography>
+            <div style={{display:"flex",justifyContent:"center",}} >
+                <img src={img1} alt="" style={{width:"150px"}}  />
+                <img src={img2} alt=""  style={{width:"150px",margin:"0 20px"}} />
+                <img src={img3} alt="" style={{width:"150px"}}  />
+            </div>
             <Typography align="center" gutterBottom className="subtitle">
                 Get Pre-Qualified for Financing
             </Typography>
@@ -220,10 +231,7 @@ const MultiStepForm = () => {
             </Stepper>
             {loading ? (
                 <div className="loading-container">
-                    <CircularProgress />
-                    <Typography variant="h6" align="center" gutterBottom>
-                        Saving your data...
-                    </Typography>
+                    <LottieAnimation />
                 </div>
             ) : (
                 <>
@@ -242,6 +250,9 @@ const MultiStepForm = () => {
                                 margin="normal"
                                 InputProps={{
                                     startAdornment: <span className="dollar-sign">$</span>,
+                                    classes: {
+                                        input: 'loan-amount-input' // Add this line
+                                    }
                                 }}
                                 className="loan-amount-input"
                             />
@@ -465,12 +476,12 @@ const MultiStepForm = () => {
                                     />
                                 </Grid>
                             </Grid>
-                            <FormControlLabel
+                            {/* <FormControlLabel
                                 control={<Checkbox name="agreement" checked={formData.agreement} onChange={handleInputChange} />}
                                 // eslint-disable-next-line react/no-unescaped-entities
                                 label={<Typography variant="body2">By selecting "Get Loan Offers" you agree to our <a href="https://www.klendify.com/privacy-policy" target="_blank">Privacy Policy</a>.</Typography>}
                                 className="agreement-checkbox"
-                            />
+                            /> */}
                             <div className="step-navigation">
                                 {/* <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
                                     Back
@@ -483,9 +494,11 @@ const MultiStepForm = () => {
                     )}
                     {activeStep === steps.length && (
                         <div className="completion-message">
-                            <div className="completion-icon">
+                            {/* <div className="completion-icon">
+
                                 <svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 24 24"><path fill="#1e2a78" d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm-1.706 18.207l-4.793-4.793 1.414-1.414 3.379 3.379 7.379-7.379 1.414 1.414-8.793 8.793z" /></svg>
-                            </div>
+                            </div> */}
+                            <FinishingAnimation />
                             <Typography variant="h5" align="center" gutterBottom>
                                 {message}
                             </Typography>
