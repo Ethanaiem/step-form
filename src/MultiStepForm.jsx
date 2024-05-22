@@ -247,24 +247,15 @@ const MultiStepForm = () => {
 
     return (
         <div className="form-container">
-            <Typography align="center" gutterBottom className="title">
-                QUICK & FLEXIBLE BUSINESS LOANS
-            </Typography>
-            <div style={{ display: "flex", justifyContent: "center", }} >
-                <img src={img1} alt="" style={{ width: "180px" }} />
-                <img src={img2} alt="" style={{ width: "180px", margin: "0 20px" }} />
-                <img src={img3} alt="" style={{ width: "180px" }} />
-            </div>
-            <Typography align="center" gutterBottom className="subtitle">
-                Get Pre-Qualified for Financing
-            </Typography>
-            <Stepper activeStep={activeStep} alternativeLabel className="stepper">
+
+
+            {/* <Stepper activeStep={activeStep} alternativeLabel className="stepper">
                 {steps.map((label, index) => (
                     <Step key={index}>
                         <StepLabel>{label}</StepLabel>
                     </Step>
                 ))}
-            </Stepper>
+            </Stepper> */}
             {loading ? (
                 <div className="loading-container">
                     <LottieAnimation />
@@ -272,39 +263,66 @@ const MultiStepForm = () => {
             ) : (
                 <>
                     {activeStep === 0 && (
-                        <div className="step-content">
-                            <Typography variant="h5" align="center" gutterBottom className="step-title">
-                                Enter your desired loan amount.
+                        <>
+                            <Typography align="center" gutterBottom className="title">
+                                QUICK & FLEXIBLE BUSINESS LOANS
                             </Typography>
-                            <TextField
-                                type="text"
-                                label="Loan Amount"
-                                value={loanAmount}
-                                onChange={handleLoanAmountChange}
-                                fullWidth
-                                placeholder='25,000'
-                                margin="normal"
-                                InputProps={{
-                                    startAdornment: <span className="dollar-sign">$</span>,
-                                    classes: {
-                                        input: 'loan-amount-input' // Add this line
-                                    }
-                                }}
-                                className="loan-amount-input"
-                            />
-
-                            <div className="step-navigation">
-                                <Button variant="contained" onClick={handleNext} className="loan-next-button" disabled={!loanAmount}>
-                                    Next
-                                </Button>
+                            <div style={{ display: "flex", justifyContent: "center", }} >
+                                <img src={img1} alt="" style={{ width: "90px" }} />
+                                <img src={img2} alt="" style={{ width: "90px", margin: "0 20px" }} />
+                                <img src={img3} alt="" style={{ width: "90px" }} />
                             </div>
-                        </div>
+                            <div className="step-content">
+
+                                <Typography variant="h5" align="center" gutterBottom className="step-title-mini">
+                                    Enter your desired loan amount.
+                                </Typography>
+                                <Stepper activeStep={activeStep} alternativeLabel className="stepper">
+                                    {steps.map((label, index) => (
+                                        <Step key={index}>
+                                            <StepLabel>{label}</StepLabel>
+                                        </Step>
+                                    ))}
+                                </Stepper>
+                                <TextField
+                                    type="text"
+                                    label="Loan Amount"
+                                    value={loanAmount}
+                                    onChange={handleLoanAmountChange}
+                                    fullWidth
+                                    placeholder='25,000'
+                                    margin="normal"
+                                    InputProps={{
+                                        startAdornment: <span className="dollar-sign">$</span>,
+                                        classes: {
+                                            input: 'loan-amount-input' // Add this line
+                                        }
+                                    }}
+                                    className="loan-amount-input"
+                                />
+
+                                <div className="step-navigation">
+                                    <Button variant="contained" onClick={handleNext} className="loan-next-button" disabled={!loanAmount}>
+                                        GET LOANS OFFERS
+                                    </Button>
+                                </div>
+                                <p style={{ fontSize: "14px" }}>It’s FREE and won’t affect your credit score.</p>
+                            </div>
+                        </>
                     )}
                     {activeStep === 1 && (
                         <div className="step-content">
                             <Typography variant="h5" align="center" gutterBottom className="step-title">
                                 Business Operating Time
                             </Typography>
+
+                            <Stepper activeStep={activeStep} alternativeLabel className="stepper">
+                                {steps.map((label, index) => (
+                                    <Step key={index}>
+                                        <StepLabel>{label}</StepLabel>
+                                    </Step>
+                                ))}
+                            </Stepper>
                             <Grid container spacing={3}>
                                 {[
                                     "Less than 3 months",
@@ -348,6 +366,13 @@ const MultiStepForm = () => {
                             <Typography variant="h5" align="center" gutterBottom className="step-title">
                                 Gross Monthly Revenue
                             </Typography>
+                            <Stepper activeStep={activeStep} alternativeLabel className="stepper">
+                                {steps.map((label, index) => (
+                                    <Step key={index}>
+                                        <StepLabel>{label}</StepLabel>
+                                    </Step>
+                                ))}
+                            </Stepper>
                             <Grid container spacing={3}>
                                 {[
                                     "Less than $1,000",
@@ -393,6 +418,13 @@ const MultiStepForm = () => {
                             <Typography variant="h5" align="center" gutterBottom className="step-title">
                                 Personal Credit Score
                             </Typography>
+                            <Stepper activeStep={activeStep} alternativeLabel className="stepper">
+                                {steps.map((label, index) => (
+                                    <Step key={index}>
+                                        <StepLabel>{label}</StepLabel>
+                                    </Step>
+                                ))}
+                            </Stepper>
                             <Grid container spacing={3}>
                                 {[
                                     "500 and Below",
@@ -436,6 +468,13 @@ const MultiStepForm = () => {
                             <Typography variant="h5" align="center" gutterBottom className="step-title">
                                 Input your basic business information
                             </Typography>
+                            <Stepper activeStep={activeStep} alternativeLabel className="stepper">
+                                {steps.map((label, index) => (
+                                    <Step key={index}>
+                                        <StepLabel>{label}</StepLabel>
+                                    </Step>
+                                ))}
+                            </Stepper>
                             <Typography variant="body1" align="center" gutterBottom className="sub-text">
                                 And get your loan offer now!
                             </Typography>
@@ -453,7 +492,7 @@ const MultiStepForm = () => {
                                         helperText={errors.firstName && 'This field cannot be empty'}
                                     />
                                 </Grid>
-                                <Grid item xs={5.8} style={{marginLeft:'17px'}}>
+                                <Grid item xs={5.8} style={{ marginLeft: '17px' }}>
                                     <TextField
                                         label="Last Name"
                                         name="lastName"
@@ -508,7 +547,7 @@ const MultiStepForm = () => {
                                         helperText={errors.businessName && 'This field cannot be empty'}
                                     />
                                 </Grid>
-                                <Grid item xs={12} style={{marginTop:"15px"}}>
+                                <Grid item xs={12} style={{ marginTop: "15px" }}>
                                     <TextField
                                         error={!!errorMessages.SSN}
                                         label="SSN"
