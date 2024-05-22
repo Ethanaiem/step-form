@@ -1,7 +1,8 @@
 // MultiStepForm.jsx
 import { useState } from 'react';
-import { TextField, Button, Stepper, Step, StepLabel, Typography, Grid, Checkbox, FormControlLabel } from '@mui/material';
+import { TextField, Button, Stepper, Step, StepLabel, Typography, Grid } from '@mui/material';
 import 'react-phone-input-2/lib/style.css';
+
 import { useNavigate } from 'react-router-dom';
 import { db } from './firebase.config';
 import { collection, addDoc, getDocs, query, where } from 'firebase/firestore';
@@ -41,8 +42,6 @@ const MultiStepForm = () => {
     const [errorMessages, setErrorMessages] = useState({ SSN: '', });
     // eslint-disable-next-line no-unused-vars
     const [preApproved, setPreApproved] = useState(false);
-    const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
-    const [animationCompleted, setAnimationCompleted] = useState(false);
 
     const navigate = useNavigate();
 
