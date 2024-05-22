@@ -65,9 +65,7 @@ const MultiStepFormExtended = () => {
         const data = location.state?.formData
         setPrevFormData(data)
     }, [])
-    // const handleNext = () => {
-    //     setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    // };
+
     const handleNext = () => {
         setActiveStep((prevActiveStep) => {
             if (prevActiveStep === 5) {
@@ -400,41 +398,42 @@ const MultiStepFormExtended = () => {
                 <LinearProgress variant="determinate" value={progress} sx={{ mt: 2, mb: 2, flex: 1, marginRight: '10px', height: '10px', borderRadius: "20px" }} />
                 <span>{`${Math.round(progress)}%`}</span>
             </div>
-            {isLoading && (
+            {isLoading ? (
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100px' }}>
-                    {/* <LottieAnimation /> */}
+                    <LottieAnimation />
                 </div>
-            )}
-            {activeStep === 0 && (
-                <div className="step-content">
-                    <Typography variant="h5" align="center" gutterBottom className="step-title">
-                        Business Entity
-                    </Typography>
-                    <Grid container spacing={2}>
-                        {["LLC", "Sole Proprietorship", "Partnership", "Non-Profit", "C Corporation", "S Corporation", "Professional Corporation", "I haven't registered it yet", "I am not sure",].map((entity) => (
-                            <Grid item xs={6} key={entity}>
-                                <Button variant="outlined" fullWidth className={`business-entity-button ${businessEntity === entity ? 'selected' : ''}`} onClick={() => handleBusinessEntitySelect(entity)} >
-                                    {entity}
-                                </Button>
-                            </Grid>
-                        ))}
-                    </Grid>
-                    {/* <div className="step-navigation">
+        ) : (
+            <>
+                {activeStep === 0 && (
+                    <div className="step-content">
+                        <Typography variant="h5" align="center" gutterBottom className="step-title">
+                            Business Entity
+                        </Typography>
+                        <Grid container spacing={2}>
+                            {["LLC", "Sole Proprietorship", "Partnership", "Non-Profit", "C Corporation", "S Corporation", "Professional Corporation", "I haven't registered it yet", "I am not sure",].map((entity) => (
+                                <Grid item xs={6} key={entity}>
+                                    <Button variant="outlined" fullWidth className={`business-entity-button ${businessEntity === entity ? 'selected' : ''}`} onClick={() => handleBusinessEntitySelect(entity)} >
+                                        {entity}
+                                    </Button>
+                                </Grid>
+                            ))}
+                        </Grid>
+                        {/* <div className="step-navigation">
                         <Button variant="contained" color="primary" onClick={handleNext} className="next-button" disabled={!businessEntity}>
                             Next
                         </Button>
                     </div> */}
-                </div>
-            )}
-            {activeStep === 1 && (
-                <div className="step-content">
-                    <Typography variant="h5" align="center" gutterBottom className="step-title">
-                        Please enter your business address
-                    </Typography>
-                    <Grid container spacing={2}>
-                        {Object.keys(address).map((key) => (
-                            <Grid item xs={12} sm={6} key={key}>
-                                <TextField label={key.charAt(0).toUpperCase() + key.slice(1)} name={key} value={address[key]} onChange={handleAddressChange} fullWidth margin="normal" required />
+                    </div>
+                )}
+                {activeStep === 1 && (
+                    <div className="step-content">
+                        <Typography variant="h5" align="center" gutterBottom className="step-title">
+                            Please enter your business address
+                        </Typography>
+                        <Grid container spacing={2}>
+                            {Object.keys(address).map((key) => (
+                                <Grid item xs={12} sm={6} key={key}>
+                                    <TextField label={key.charAt(0).toUpperCase() + key.slice(1)} name={key} value={address[key]} onChange={handleAddressChange} fullWidth margin="normal" required />
 
                             </Grid>
                         ))}
@@ -485,34 +484,34 @@ const MultiStepFormExtended = () => {
                         {/* <Button variant="contained" color="primary" onClick={handleNext} className="next-button" disabled={isHomeBased === null}>
                             Next
                         </Button> */}
+                        </div>
                     </div>
-                </div>
-            )}
-            {activeStep === 3 && (
-                <div className="step-content-button">
-                    <Typography variant="h5" align="center" gutterBottom className="step-title">
-                        Business Registration Date
-                    </Typography>
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                )}
+                {activeStep === 3 && (
+                    <div className="step-content-button">
+                        <Typography variant="h5" align="center" gutterBottom className="step-title">
+                            Business Registration Date
+                        </Typography>
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
 
-                        <DesktopDatePicker
-                            label="Date"
-                            value={registrationDate}
-                            onChange={handleDateChange}
-                            renderInput={(params) => <TextField {...params} fullWidth />}
-                        />
-                    </LocalizationProvider>
-                    <div className="step-navigation">
-                        <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
-                            Back
-                        </Button>
-                        <Button variant="contained" color="primary" onClick={handleNext} className="next-button" disabled={!registrationDate}>
-                            Next
-                        </Button>
+                            <DesktopDatePicker
+                                label="Date"
+                                value={registrationDate}
+                                onChange={handleDateChange}
+                                renderInput={(params) => <TextField {...params} fullWidth />}
+                            />
+                        </LocalizationProvider>
+                        <div className="step-navigation">
+                            <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
+                                Back
+                            </Button>
+                            <Button variant="contained" color="primary" onClick={handleNext} className="next-button" disabled={!registrationDate}>
+                                Next
+                            </Button>
+                        </div>
                     </div>
-                </div>
-            )}
-            {/* {activeStep === 4 && (
+                )}
+                {/* {activeStep === 4 && (
                 <div className="step-content">
                     <Typography variant="h5" align="center" gutterBottom>
                         Your Home Address
@@ -572,41 +571,41 @@ const MultiStepFormExtended = () => {
 
                     </Grid>
 
-                    <div className="step-navigation">
-                        <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
-                            Back
-                        </Button>
-                        <Button variant="contained" color="primary" onClick={handleNext} className="next-button" disabled={!isStepValid(4)}>
-                            Next
-                        </Button>
+                        <div className="step-navigation">
+                            <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
+                                Back
+                            </Button>
+                            <Button variant="contained" color="primary" onClick={handleNext} className="next-button" disabled={!isStepValid(4)}>
+                                Next
+                            </Button>
+                        </div>
                     </div>
-                </div>
-            )}
-            {activeStep === 5 && (
-                <div className="step-content-date">
-                    <Typography variant="h5" align="center" gutterBottom>
-                        Your Date of Birth
-                    </Typography>
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-
-                        <DesktopDatePicker label="Date" name='dateOfBirth' value={dateOfBirth} onChange={handleDobDateChange} renderInput={(params) => <TextField {...params} fullWidth />} />
-                    </LocalizationProvider>
-                    {errorMessage && (
-                        <Typography variant="body2" color="error" align="center">
-                            {errorMessage}
+                )}
+                {activeStep === 5 && (
+                    <div className="step-content-date">
+                        <Typography variant="h5" align="center" gutterBottom>
+                            Your Date of Birth
                         </Typography>
-                    )}
-                    <div className="step-navigation">
-                        <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
-                            Back
-                        </Button>
-                        <Button variant="contained" color="primary" onClick={handleNext} className="next-button" disabled={!isStepValid(5)}>
-                            Next
-                        </Button>
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+
+                            <DesktopDatePicker label="Date" name='dateOfBirth' value={dateOfBirth} onChange={handleDobDateChange} renderInput={(params) => <TextField {...params} fullWidth />} />
+                        </LocalizationProvider>
+                        {errorMessage && (
+                            <Typography variant="body2" color="error" align="center">
+                                {errorMessage}
+                            </Typography>
+                        )}
+                        <div className="step-navigation">
+                            <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
+                                Back
+                            </Button>
+                            <Button variant="contained" color="primary" onClick={handleNext} className="next-button" disabled={!isStepValid(5)}>
+                                Next
+                            </Button>
+                        </div>
                     </div>
-                </div>
-            )}
-            {/* {activeStep === 6 && (
+                )}
+                {/* {activeStep === 6 && (
                 <div className="step-content">
                     <Typography variant="h5" align="center" gutterBottom>
                         Your Tax Details
@@ -707,136 +706,136 @@ const MultiStepFormExtended = () => {
             )}
 
 
-            {activeStep === 8 && isSoleOwner && (
-                <div className="step-content">
-                    <Typography variant="h5" align="center" gutterBottom>
-                        What do you need the money for?
-                    </Typography>
-                    <Grid container spacing={2}>
-                        {loanPurposes.map(purpose => (
-                            <Grid item xs={12} sm={6} key={purpose}>
-                                <Button variant={loanPurpose === purpose ? "contained" : "outlined"} onClick={() => handleLoanPurpose(purpose)} fullWidth >
-                                    {purpose}
-                                </Button>
-                            </Grid>
-                        ))}
-                    </Grid>
-                    <div className="step-navigation">
-                        <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
-                            Back
-                        </Button>
-                        {/* <Button variant="contained" color="primary" onClick={handleNext} className="next-button" disabled={!loanPurpose}>
+                {activeStep === 8 && isSoleOwner && (
+                    <div className="step-content">
+                        <Typography variant="h5" align="center" gutterBottom>
+                            What do you need the money for?
+                        </Typography>
+                        <Grid container spacing={2}>
+                            {loanPurposes.map(purpose => (
+                                <Grid item xs={12} sm={6} key={purpose}>
+                                    <Button variant={loanPurpose === purpose ? "contained" : "outlined"} onClick={() => handleLoanPurpose(purpose)} fullWidth >
+                                        {purpose}
+                                    </Button>
+                                </Grid>
+                            ))}
+                        </Grid>
+                        <div className="step-navigation">
+                            <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
+                                Back
+                            </Button>
+                            {/* <Button variant="contained" color="primary" onClick={handleNext} className="next-button" disabled={!loanPurpose}>
                             Next
                         </Button> */}
+                        </div>
                     </div>
-                </div>
-            )}
-            {activeStep === 9 && !isSoleOwner && (
-                <div className="step-content">
-                    <Typography variant="h5" align="center" gutterBottom>
-                        Do you want to add a second owner?
-                    </Typography>
-                    <Typography>
-                        Add second owner if ownership is more than 49%
-                    </Typography>
-                    <Grid container spacing={2} justifyContent="center">
-                        <Grid item>
-                            <Button variant={addSecondOwner ? "contained" : "outlined"} onClick={() => setAddSecondOwner(true)} >
-                                Yes
-                            </Button>
+                )}
+                {activeStep === 9 && !isSoleOwner && (
+                    <div className="step-content">
+                        <Typography variant="h5" align="center" gutterBottom>
+                            Do you want to add a second owner?
+                        </Typography>
+                        <Typography>
+                            Add second owner if ownership is more than 49%
+                        </Typography>
+                        <Grid container spacing={2} justifyContent="center">
+                            <Grid item>
+                                <Button variant={addSecondOwner ? "contained" : "outlined"} onClick={() => setAddSecondOwner(true)} >
+                                    Yes
+                                </Button>
+                            </Grid>
+                            <Grid item>
+                                <Button variant={!addSecondOwner ? "contained" : "outlined"} onClick={() => setAddSecondOwner(false)}   >
+                                    No
+                                </Button>
+                            </Grid>
                         </Grid>
-                        <Grid item>
-                            <Button variant={!addSecondOwner ? "contained" : "outlined"} onClick={() => setAddSecondOwner(false)}   >
-                                No
+                        <div className="step-navigation">
+                            <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
+                                Back
                             </Button>
+                            <Button variant="contained" color="primary" onClick={handleNext} className="next-button">
+                                Next
+                            </Button>
+                        </div>
+                    </div>
+                )}
+                {activeStep === 10 && !isSoleOwner && !addSecondOwner && (
+                    <div className="step-content">
+                        <Typography variant="h5" align="center" gutterBottom>
+                            What do you need the money for?
+                        </Typography>
+                        <Grid container spacing={2}>
+                            {loanPurposes.map(purpose => (
+                                <Grid item xs={12} sm={6} key={purpose}>
+                                    <Button variant={loanPurpose === purpose ? "contained" : "outlined"} onClick={() => handleLoanPurpose(purpose)} fullWidth >
+                                        {purpose}
+                                    </Button>
+                                </Grid>
+                            ))}
                         </Grid>
-                    </Grid>
-                    <div className="step-navigation">
-                        <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
-                            Back
-                        </Button>
-                        <Button variant="contained" color="primary" onClick={handleNext} className="next-button">
-                            Next
-                        </Button>
+                        <div className="step-navigation">
+                            <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
+                                Back
+                            </Button>
+                            <Button variant="contained" color="primary" onClick={handleNext} className="next-button" disabled={!loanPurpose}>
+                                Next
+                            </Button>
+                        </div>
                     </div>
-                </div>
-            )}
-            {activeStep === 10 && !isSoleOwner && !addSecondOwner && (
-                <div className="step-content">
-                    <Typography variant="h5" align="center" gutterBottom>
-                        What do you need the money for?
-                    </Typography>
-                    <Grid container spacing={2}>
-                        {loanPurposes.map(purpose => (
-                            <Grid item xs={12} sm={6} key={purpose}>
-                                <Button variant={loanPurpose === purpose ? "contained" : "outlined"} onClick={() => handleLoanPurpose(purpose)} fullWidth >
-                                    {purpose}
-                                </Button>
-                            </Grid>
-                        ))}
-                    </Grid>
-                    <div className="step-navigation">
-                        <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
-                            Back
-                        </Button>
-                        <Button variant="contained" color="primary" onClick={handleNext} className="next-button" disabled={!loanPurpose}>
-                            Next
-                        </Button>
+                )}
+                {activeStep === 9 && isSoleOwner && (
+                    <div className="step-content">
+                        <Typography variant="h5" align="center" gutterBottom>
+                            When do you need the money?
+                        </Typography>
+                        <Grid container spacing={2}>
+                            {fundingOptions.map(option => (
+                                <Grid item xs={12} sm={6} key={option}>
+                                    <Button variant={fundingTime === option ? "contained" : "outlined"} onClick={() => setFundingTime(option)} fullWidth >
+                                        {option}
+                                    </Button>
+                                </Grid>
+                            ))}
+                        </Grid>
+                        <div className="step-navigation">
+                            <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
+                                Back
+                            </Button>
+                            <Button variant="contained" color="primary" onClick={handleSubmit} className="next-button">
+                                Submit
+                            </Button>
+                        </div>
                     </div>
-                </div>
-            )}
-            {activeStep === 9 && isSoleOwner && (
-                <div className="step-content">
-                    <Typography variant="h5" align="center" gutterBottom>
-                        When do you need the money?
-                    </Typography>
-                    <Grid container spacing={2}>
-                        {fundingOptions.map(option => (
-                            <Grid item xs={12} sm={6} key={option}>
-                                <Button variant={fundingTime === option ? "contained" : "outlined"} onClick={() => setFundingTime(option)} fullWidth >
-                                    {option}
-                                </Button>
-                            </Grid>
-                        ))}
-                    </Grid>
-                    <div className="step-navigation">
-                        <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
-                            Back
-                        </Button>
-                        <Button variant="contained" color="primary" onClick={handleSubmit} className="next-button">
-                            Submit
-                        </Button>
+                )}
+                {activeStep === 11 && !isSoleOwner && !addSecondOwner && (
+                    <div className="step-content">
+                        <Typography variant="h5" align="center" gutterBottom>
+                            When do you need the money?
+                        </Typography>
+                        <Grid container spacing={2}>
+                            {fundingOptions.map(option => (
+                                <Grid item xs={12} sm={6} key={option}>
+                                    <Button
+                                        variant={fundingTime === option ? "contained" : "outlined"}
+                                        onClick={() => setFundingTime(option)}
+                                        fullWidth
+                                    >
+                                        {option}
+                                    </Button>
+                                </Grid>
+                            ))}
+                        </Grid>
+                        <div className="step-navigation">
+                            <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
+                                Back
+                            </Button>
+                            <Button variant="contained" color="primary" onClick={handleSubmit} className="next-button">
+                                Submit
+                            </Button>
+                        </div>
                     </div>
-                </div>
-            )}
-            {activeStep === 11 && !isSoleOwner && !addSecondOwner && (
-                <div className="step-content">
-                    <Typography variant="h5" align="center" gutterBottom>
-                        When do you need the money?
-                    </Typography>
-                    <Grid container spacing={2}>
-                        {fundingOptions.map(option => (
-                            <Grid item xs={12} sm={6} key={option}>
-                                <Button
-                                    variant={fundingTime === option ? "contained" : "outlined"}
-                                    onClick={() => setFundingTime(option)}
-                                    fullWidth
-                                >
-                                    {option}
-                                </Button>
-                            </Grid>
-                        ))}
-                    </Grid>
-                    <div className="step-navigation">
-                        <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
-                            Back
-                        </Button>
-                        <Button variant="contained" color="primary" onClick={handleSubmit} className="next-button">
-                            Submit
-                        </Button>
-                    </div>
-                </div>
-            )}
+                )}
 
             {activeStep === 10 && !isSoleOwner && addSecondOwner && (
                 <div className="step-content">
