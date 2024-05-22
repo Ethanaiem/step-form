@@ -49,9 +49,7 @@ const MultiStepFormExtended = () => {
         const data = location.state?.formData
         setPrevFormData(data)
     }, [])
-    // const handleNext = () => {
-    //     setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    // };
+  
     const handleNext = () => {
         setActiveStep((prevActiveStep) => {
             if (prevActiveStep === 5) {

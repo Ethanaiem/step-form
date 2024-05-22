@@ -2,14 +2,16 @@
 import { useState } from 'react';
 import { TextField, Button, Stepper, Step, StepLabel, Typography, Grid, Checkbox, FormControlLabel } from '@mui/material';
 import 'react-phone-input-2/lib/style.css';
-import CircularProgress from '@mui/material/CircularProgress';
-
 import { useNavigate } from 'react-router-dom';
 import { db } from './firebase.config';
 import { collection, addDoc, getDocs, query, where } from 'firebase/firestore';
 import './MultiStepForm.css';
 import LottieAnimation from './LottieAnimation';
 import FinishingAnimation from './FinishingAnimation';
+
+import img1 from './assets/66398c2d1946fd86bce731bd_3.png'
+import img2 from './assets/66398c2d8e95b96249977819_1.png'
+import img3 from './assets/66398c2d8e95b9624997780c_2.png'
 
 const MultiStepForm = () => {
     const [activeStep, setActiveStep] = useState(0);
@@ -182,10 +184,7 @@ const MultiStepForm = () => {
                 setMessage('You have been pre-approved successfully!');
                 setPreApproved(true); // Set pre-approved state
             }
-            // setShowSuccessAnimation(true);
-            // setTimeout(() => {
-            //     setShowSuccessAnimation(false);
-            // }, 3000);
+
             setLoading(false);
             setActiveStep(steps.length);
         } catch (error) {
@@ -216,6 +215,11 @@ const MultiStepForm = () => {
             <Typography align="center" gutterBottom className="title">
                 QUICK & FLEXIBLE BUSINESS LOANS
             </Typography>
+            <div style={{display:"flex",justifyContent:"center",}} >
+                <img src={img1} alt="" style={{width:"150px"}}  />
+                <img src={img2} alt=""  style={{width:"150px",margin:"0 20px"}} />
+                <img src={img3} alt="" style={{width:"150px"}}  />
+            </div>
             <Typography align="center" gutterBottom className="subtitle">
                 Get Pre-Qualified for Financing
             </Typography>
