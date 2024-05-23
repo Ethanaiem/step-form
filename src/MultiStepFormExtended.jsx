@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState, useMemo } from 'react';
-import { TextField, Button, Stepper, Typography, Grid } from '@mui/material';
+import { TextField, Button, Stepper, Typography, Grid, InputAdornment } from '@mui/material';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -42,6 +42,8 @@ const MultiStepFormExtended = () => {
     const [errorMessages, setErrorMessages] = useState({ SSN: '', ITIN: '', EIN: '' });
     const location = useLocation();
     const [prevFormData, setPrevFormData] = useState(null)
+
+
     const totalSteps = useMemo(() => {
         if (isSoleOwner) {
             return 9
@@ -67,7 +69,7 @@ const MultiStepFormExtended = () => {
         const rawProgress = (activeStep / Math.max(totalSteps - 1, 1)) * 100;
         return Math.min(rawProgress, 100); // Ensures the progress does not exceed 100%
     }, [activeStep, totalSteps]);
-    
+
     useEffect(() => {
         const data = location.state?.formData
         setPrevFormData(data)
@@ -76,7 +78,7 @@ const MultiStepFormExtended = () => {
     const parseFirestoreTimestamp = (timestamp) => {
         return timestamp ? dayjs(new Date(timestamp.seconds * 1000)) : null;
     };
-    
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -88,7 +90,7 @@ const MultiStepFormExtended = () => {
                     if (!querySnapshot.empty) {
                         const data = querySnapshot.docs[0].data(); // assuming only one document per email
                         console.log(data, "Fetched data");
-    
+
                         // Set all states based on fetched data
                         if (data.businessEntity) setBusinessEntity(data.businessEntity);
                         if (data.address) setAddress(data.address);
@@ -97,8 +99,8 @@ const MultiStepFormExtended = () => {
                         if (data.secondOwnerFormData) setSecondOwnerFormData(data.secondOwnerFormData);
                         if (data.EIN) setTaxDetails(prev => ({ ...prev, EIN: data.EIN }));
                         if (data.secondOwnerTaxDetails) setSecondOwnerTaxDetails({ SSN: data.secondOwnerTaxDetails });
-                        if(data.activeStep) setActiveStep(data.activeStep);
-                        
+                        if (data.activeStep) setActiveStep(data.activeStep);
+
                         setIsSoleOwner(data.isSoleOwner);
                         setLoanPurpose(data.loanPurpose);
                         setOwnershipPercentage(data.ownershipPercentage);
@@ -107,7 +109,7 @@ const MultiStepFormExtended = () => {
                         setFundingTime(data.fundingTime);
                         setSecondOwnerCreditScore(data.secondOwnerCreditScore);
                         // setActiveStep(data.activeStep)
-                        
+
                         // Handle dates specifically
                         if (data.registrationDate) setRegistrationDate(parseFirestoreTimestamp(data.registrationDate));
                         if (data.ownerOneDOB) setDateOfBirth(parseFirestoreTimestamp(data.ownerOneDOB));
@@ -120,19 +122,19 @@ const MultiStepFormExtended = () => {
                 }
             }
         };
-    
+
         fetchData();
     }, [location.state?.formData?.email]); // Dependency on email change
-    
 
-    
+
+
 
     const handleNext = () => {
         if (activeStep < totalSteps) {
             setActiveStep((prevActiveStep) => prevActiveStep + 1);
         }
     };
-    
+
     const handleCreditScoreSelect = (score) => {
         setSecondOwnerCreditScore(score);
         handleNext()
@@ -148,9 +150,20 @@ const MultiStepFormExtended = () => {
     };
     const handleAddressChange = (e) => {
         const { name, value } = e.target;
-        setAddress({ ...address, [name]: value, });
-    };
+        let formattedValue = value;
 
+        // Ensure city and state fields only accept alphabets
+        if (name === 'city' || name === 'state') {
+            formattedValue = value.replace(/[^a-zA-Z\s]/g, '');
+        }
+
+        // Ensure zip field only accepts 6-digit numbers
+        if (name === 'zip') {
+            formattedValue = value.replace(/\D/g, '').slice(0, 6); // Ensure it's a 6-digit number
+        }
+
+        setAddress({ ...address, [name]: formattedValue });
+    };
     const handleInputChange = (setter, errorSetter) => (event) => {
         const { name, value } = event.target;
         const formattedValue = formatValue(value, name); // Format the input value
@@ -159,6 +172,8 @@ const MultiStepFormExtended = () => {
         // Regular expression patterns for SSN, ITIN, and EIN formats
         const itinPattern = /^\d{3}-\d{2}-\d{4}$/;
         const einPattern = /^\d{2}-\d{7}$/;
+        const ssnPattern = /^\d{3}-\d{2}-\d{4}$/;
+
 
         let errorMessage = '';
 
@@ -171,10 +186,22 @@ const MultiStepFormExtended = () => {
         if (name === 'EIN' && !einPattern.test(formattedValue)) {
             errorMessage = 'Invalid EIN format';
         }
+        if (name === 'SSN' && !ssnPattern.test(formattedValue)) {
+            errorMessage = 'Invalid SSN format';
+        }
+        // Ensure city and state fields only accept alphabets
+        if (name === 'city' || name === 'state') {
+            formattedValue = value.replace(/[^a-zA-Z\s]/g, '');
+        }
 
+        // Ensure zip field only accepts 6-digit numbers
+        if (name === 'zip') {
+            formattedValue = value.replace(/\D/g, '').slice(0, 6); // Ensure it's a 6-digit number
+        }
         // Set error message if format is invalid
         errorSetter(prevState => ({ ...prevState, [name]: errorMessage }));
     };
+
 
     const formatValue = (value, name) => {
         let formattedValue = value;
@@ -202,6 +229,20 @@ const MultiStepFormExtended = () => {
                 formattedValue = formattedValue;
             } else {
                 formattedValue = `${formattedValue.slice(0, 2)}-${formattedValue.slice(2, 9)}`;
+            }
+        }
+        else if (name === 'SSN') {
+            // Remove non-digit characters for SSN
+            formattedValue = formattedValue.replace(/\D/g, '');
+            if (formattedValue.length > 9) {
+                formattedValue = formattedValue.slice(0, 9);
+            }
+            if (formattedValue.length <= 3) {
+                formattedValue = formattedValue;
+            } else if (formattedValue.length <= 5) {
+                formattedValue = `${formattedValue.slice(0, 3)}-${formattedValue.slice(3, 5)}`;
+            } else {
+                formattedValue = `${formattedValue.slice(0, 3)}-${formattedValue.slice(3, 5)}-${formattedValue.slice(5, 9)}`;
             }
         }
 
@@ -393,7 +434,7 @@ const MultiStepFormExtended = () => {
             // case 6:
             //     return taxDetails.EIN && !errorMessages.EIN && (taxDetails.SSN || taxDetails.ITIN) && !errorMessages.SSN && !errorMessages.ITIN;
             case 11:
-                return secondOwnerHomeAddress.city && secondOwnerHomeAddress.state && secondOwnerHomeAddress.street && secondOwnerHomeAddress.unit && secondOwnerHomeAddress.zip;
+                return secondOwnerHomeAddress.city && secondOwnerHomeAddress.state && secondOwnerHomeAddress.street && secondOwnerHomeAddress.unit && secondOwnerHomeAddress.zip && secondOwnerTaxDetails.SSN && !errorMessages.SSN;
             case 10:
                 return secondOwnerFormData.firstName && secondOwnerFormData.lastName && secondOwnerFormData.email && secondOwnerFormData.contactNumber;
             case 12:
@@ -411,7 +452,7 @@ const MultiStepFormExtended = () => {
             if (field === 'registrationDate' || field === "ownerOneDOB" || field === "secondOwnerDOB") {
                 updates[field] = Timestamp.fromDate(new Date(value.toISOString()));
             }
-    
+
             try {
                 const querySnapshot = await getDocs(query(collection(db, 'loanApplications'), where('email', '==', email)));
                 if (!querySnapshot.empty) {
@@ -424,7 +465,7 @@ const MultiStepFormExtended = () => {
             }
         }
     };
-    
+
 
     useEffect(() => {
         if (businessEntity !== null && businessEntity !== '') { // Only run the update if businessEntity has been set
@@ -443,7 +484,7 @@ const MultiStepFormExtended = () => {
 
         }
     }, [address, taxDetails.EIN]);
-    
+
     useEffect(() => {
         if (isHomeBased !== null) { // Only run the update if businessEntity has been set
             updateFirestoreField('isHomebased', isHomeBased);
@@ -453,7 +494,7 @@ const MultiStepFormExtended = () => {
     }, [isHomeBased]);
 
     useEffect(() => {
-        if(registrationDate !== null){
+        if (registrationDate !== null) {
             console.log('registration date')
             updateFirestoreField('registrationDate', registrationDate)
             updateFirestoreField('activeStep', activeStep);
@@ -462,14 +503,14 @@ const MultiStepFormExtended = () => {
     }, [registrationDate])
 
     useEffect(() => {
-        if(!isStepValid()){
+        if (!isStepValid()) {
             updateFirestoreField('homeAddress', homeAddress)
             updateFirestoreField('activeStep', activeStep);
 
         }
     }, [homeAddress])
     useEffect(() => {
-        if(dateOfBirth !== null){
+        if (dateOfBirth !== null) {
             updateFirestoreField('ownerOneDOB', dateOfBirth)
             updateFirestoreField('activeStep', activeStep);
 
@@ -477,7 +518,7 @@ const MultiStepFormExtended = () => {
     }, [dateOfBirth])
 
     useEffect(() => {
-        if(isSoleOwner !== null){
+        if (isSoleOwner !== null) {
             updateFirestoreField('isSoleOwner', isSoleOwner)
             updateFirestoreField('activeStep', activeStep);
 
@@ -485,7 +526,7 @@ const MultiStepFormExtended = () => {
     }, [isSoleOwner])
 
     useEffect(() => {
-        if(loanPurpose !== null && loanPurpose !== ''){
+        if (loanPurpose !== null && loanPurpose !== '') {
             updateFirestoreField('loanPurpose', loanPurpose)
             updateFirestoreField('activeStep', activeStep);
 
@@ -493,7 +534,7 @@ const MultiStepFormExtended = () => {
     }, [loanPurpose])
 
     useEffect(() => {
-        if(fundingTime !== null && fundingTime !== ''){
+        if (fundingTime !== null && fundingTime !== '') {
             updateFirestoreField('fundingTime', fundingTime)
             updateFirestoreField('activeStep', activeStep);
 
@@ -501,7 +542,7 @@ const MultiStepFormExtended = () => {
     }, [fundingTime])
 
     useEffect(() => {
-        if(ownershipPercentage !== null && ownershipPercentage !== 0){
+        if (ownershipPercentage !== null && ownershipPercentage !== 0) {
             updateFirestoreField('ownershipPercentage', ownershipPercentage)
             updateFirestoreField('activeStep', activeStep);
 
@@ -509,7 +550,7 @@ const MultiStepFormExtended = () => {
     }, [ownershipPercentage])
 
     useEffect(() => {
-        if(addSecondOwner !== null && addSecondOwner == true){
+        if (addSecondOwner !== null && addSecondOwner == true) {
             updateFirestoreField('addSecondOwner', addSecondOwner)
             updateFirestoreField('activeStep', activeStep);
 
@@ -517,7 +558,7 @@ const MultiStepFormExtended = () => {
     }, [addSecondOwner])
 
     useEffect(() => {
-        if(isStepValid(10)){
+        if (isStepValid(10)) {
             updateFirestoreField('secondOwnerFormData', secondOwnerFormData)
             updateFirestoreField('activeStep', activeStep);
 
@@ -525,7 +566,7 @@ const MultiStepFormExtended = () => {
     }, [secondOwnerFormData])
 
     useEffect(() => {
-        if(isStepValid(11)){
+        if (isStepValid(11)) {
             updateFirestoreField('secondOwnerHomeAddress', secondOwnerHomeAddress)
             updateFirestoreField('activeStep', activeStep);
 
@@ -533,7 +574,7 @@ const MultiStepFormExtended = () => {
     }, [secondOwnerHomeAddress])
 
     useEffect(() => {
-        if(secondOwnerDOB !== null){
+        if (secondOwnerDOB !== null) {
             updateFirestoreField('secondOwnerDOB', secondOwnerDOB)
             updateFirestoreField('activeStep', activeStep);
 
@@ -541,7 +582,7 @@ const MultiStepFormExtended = () => {
     }, [secondOwnerDOB])
 
     useEffect(() => {
-        if(secondOwnerTaxDetails.SSN !== null && secondOwnerTaxDetails.SSN !== ''){
+        if (secondOwnerTaxDetails.SSN !== null && secondOwnerTaxDetails.SSN !== '') {
             updateFirestoreField('secondOwnerTaxDetails', secondOwnerTaxDetails.SSN)
             updateFirestoreField('activeStep', activeStep);
 
@@ -549,7 +590,7 @@ const MultiStepFormExtended = () => {
     }, [secondOwnerTaxDetails.SSN])
 
     useEffect(() => {
-        if(secondOwnerCreditScore !== null && secondOwnerCreditScore !== ''){
+        if (secondOwnerCreditScore !== null && secondOwnerCreditScore !== '') {
             updateFirestoreField('secondOwnerCreditScore', secondOwnerCreditScore)
             updateFirestoreField('activeStep', activeStep);
 
@@ -561,16 +602,20 @@ const MultiStepFormExtended = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [taxDetails, errorMessages, activeStep, errorMessage]);
 
+
+
     return (
         <div className="form-container">
             <Stepper activeStep={activeStep} alternativeLabel className="stepper">
             </Stepper>
-            <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-                <LinearProgress variant="determinate" value={progress} sx={{ mt: 2, mb: 2, flex: 1, marginRight: '10px', height: '10px', borderRadius: "20px" }} />
-                <span>{`${Math.round(progress)}%`}</span>
-            </div>
+            {!isLoading && (
+                <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                    <LinearProgress variant="determinate" value={progress} sx={{ mt: 2, mb: 2, flex: 1, marginRight: '10px', height: '10px', borderRadius: "20px" }} />
+                    <span>{`${Math.round(progress)}%`}</span>
+                </div>
+            )}
             {isLoading ? (
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100px' }}>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '300px' }}>
                     <LottieAnimation />
                 </div>
             ) : (
@@ -578,7 +623,10 @@ const MultiStepFormExtended = () => {
                     {activeStep === 0 && (
                         <div className="step-content">
                             <Typography variant="h5" align="center" gutterBottom className="step-title">
-                                Business Entity
+                                Business Information
+                            </Typography>
+                            <Typography variant="h5" align="center" gutterBottom className="step-title-mini">
+                                Please select your business entity
                             </Typography>
                             <Grid container spacing={2}>
                                 {["LLC", "Sole Proprietorship", "Partnership", "Non-Profit", "C Corporation", "S Corporation", "Professional Corporation", "I haven't registered it yet", "I am not sure",].map((entity) => (
@@ -594,43 +642,68 @@ const MultiStepFormExtended = () => {
                     {activeStep === 1 && (
                         <div className="step-content">
                             <Typography variant="h5" align="center" gutterBottom className="step-title">
+                                Business Information
+                            </Typography>
+                            <Typography variant="h5" align="center" gutterBottom className="step-title-mini">
                                 Please enter your business address
                             </Typography>
                             <Grid container spacing={2}>
                                 {Object.keys(address).map((key) => (
                                     <Grid item xs={12} sm={6} key={key}>
-                                        <TextField label={key.charAt(0).toUpperCase() + key.slice(1)} name={key} value={address[key]} onChange={handleAddressChange} fullWidth margin="normal" required />
-
+                                        <TextField
+                                            label={key.charAt(0).toUpperCase() + key.slice(1)}
+                                            name={key}
+                                            value={address[key]}
+                                            onChange={handleAddressChange}
+                                            fullWidth
+                                            margin="normal"
+                                            required
+                                            inputProps={{
+                                                pattern: key === 'zip' ? '\\d{6}' : key === 'city' || key === 'state' ? '^[a-zA-Z]+$' : undefined,
+                                                title: key === 'zip' ? 'Zip code should be 6 digits' : key === 'city' || key === 'state' ? 'Only alphabets are allowed' : undefined
+                                            }}
+                                        />
                                     </Grid>
                                 ))}
-
-                                <Grid item xs={12} style={{ marginTop: "16px" }} >
-                                    <TextField
-                                        error={!!errorMessages.EIN}
-                                        label="EIN"
-                                        variant="outlined"
-                                        name="EIN"
-                                        value={taxDetails.EIN}
-                                        onChange={handleInputChange(setTaxDetails, setErrorMessages)}
-                                        fullWidth
-                                        required
-                                    />
-                                </Grid>
+                                {Object.values(address).every(value => value.trim() !== '') && (
+                                    <Grid item xs={6} style={{ marginTop: "16px" }}>
+                                        <TextField
+                                            error={!!errorMessages.EIN}
+                                            label="EIN"
+                                            variant="outlined"
+                                            name="EIN"
+                                            value={taxDetails.EIN}
+                                            onChange={handleInputChange(setTaxDetails, setErrorMessages)}
+                                            fullWidth
+                                            required
+                                        />
+                                    </Grid>
+                                )}
                             </Grid>
 
                             <div className="step-navigation">
                                 <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
                                     Back
                                 </Button>
-                                <Button variant="contained" color="primary" onClick={() => handleNext('address', 'EIN')} className="next-button" disabled={!isStepValid(1)}>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={() => handleNext('address', 'EIN')}
+                                    className="next-button"
+                                    disabled={!isStepValid(1)}
+                                >
                                     Next
                                 </Button>
                             </div>
                         </div>
                     )}
+
                     {activeStep === 2 && (
                         <div className="step-content">
                             <Typography variant="h5" align="center" gutterBottom className="step-title">
+                                Business Information
+                            </Typography>
+                            <Typography variant="h5" align="center" gutterBottom className="step-title-mini">
                                 Is this home-based business?
                             </Typography>
                             <Grid container spacing={2}>
@@ -658,7 +731,10 @@ const MultiStepFormExtended = () => {
                     {activeStep === 3 && (
                         <div className="step-content-button">
                             <Typography variant="h5" align="center" gutterBottom className="step-title">
-                                Business Registration Date
+                                Business Information
+                            </Typography>
+                            <Typography variant="h5" align="center" gutterBottom className="step-title-mini">
+                                Enter your business registration date
                             </Typography>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
 
@@ -670,10 +746,10 @@ const MultiStepFormExtended = () => {
                                 />
                             </LocalizationProvider>
                             <div className="step-navigation">
-                                <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
+                                <Button variant="contained" color="secondary" onClick={handleBack} className="back-button" style={{ padding: "18px 32px", fontSize: "16px", borderRadius: "8px" }} >
                                     Back
                                 </Button>
-                                <Button variant="contained" color="primary" onClick={() => handleNext('registrationDate')} className="next-button" disabled={!registrationDate}>
+                                <Button variant="contained" color="primary" onClick={() => handleNext('registrationDate')} className="next-button" style={{ padding: "18px 32px", fontSize: "16px", borderRadius: "8px" }} disabled={!registrationDate}>
                                     Next
                                 </Button>
                             </div>
@@ -682,7 +758,10 @@ const MultiStepFormExtended = () => {
                     {activeStep === 4 && (
                         <div className="step-content">
                             <Typography variant="h5" align="center" gutterBottom className="step-title">
-                                Your Home Address
+                                Personal Information
+                            </Typography>
+                            <Typography variant="h5" align="center" gutterBottom className="step-title-mini">
+                                Enter Your Home Address
                             </Typography>
                             <Grid container spacing={2}>
                                 {Object.entries(homeAddress).map(([key, value]) => (
@@ -706,7 +785,10 @@ const MultiStepFormExtended = () => {
                     {activeStep === 5 && (
                         <div className="step-content-date">
                             <Typography variant="h5" align="center" gutterBottom className="step-title">
-                                Your Date of Birth
+                                Personal Information
+                            </Typography>
+                            <Typography variant="h5" align="center" gutterBottom className="step-title-mini">
+                                Enter Your Date of Birth
                             </Typography>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
 
@@ -718,10 +800,10 @@ const MultiStepFormExtended = () => {
                                 </Typography>
                             )}
                             <div className="step-navigation">
-                                <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
+                                <Button variant="contained" color="secondary" onClick={handleBack} className="back-button" style={{ padding: "18px 32px", fontSize: "16px", borderRadius: "8px" }}>
                                     Back
                                 </Button>
-                                <Button variant="contained" color="primary" onClick={handleNext} className="next-button" disabled={!isStepValid(5)}>
+                                <Button variant="contained" color="primary" onClick={handleNext} className="next-button" style={{ padding: "18px 32px", fontSize: "16px", borderRadius: "8px" }} disabled={!isStepValid(5)}>
                                     Next
                                 </Button>
                             </div>
@@ -731,6 +813,9 @@ const MultiStepFormExtended = () => {
                     {activeStep === 6 && (
                         <div className="step-content">
                             <Typography variant="h5" align="center" gutterBottom className="step-title">
+                                Business  Information
+                            </Typography>
+                            <Typography variant="h5" align="center" gutterBottom className="step-title-mini">
                                 Are you the sole owner?
                             </Typography>
                             <Grid container spacing={2} justifyContent="center">
@@ -758,6 +843,9 @@ const MultiStepFormExtended = () => {
                     {activeStep === 7 && !isSoleOwner && (
                         <div className="step-content">
                             <Typography variant="h5" align="center" gutterBottom className="step-title">
+                                Ownership Information
+                            </Typography>
+                            <Typography variant="h5" align="center" gutterBottom className="step-title-mini">
                                 What percentage of ownership do you have?
                             </Typography>
                             <Typography gutterBottom>
@@ -778,7 +866,10 @@ const MultiStepFormExtended = () => {
                                 label="Ownership Percentage"
                                 variant="outlined"
                                 fullWidth
-                                inputProps={{ min: '', max: 100 }}
+                                InputProps={{
+                                    endAdornment: <InputAdornment position="end">%</InputAdornment>,
+                                    inputProps: { min: 0, max: 100 }
+                                }}
                             />
                             <div className="step-navigation">
                                 <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
@@ -792,9 +883,13 @@ const MultiStepFormExtended = () => {
                     )}
 
 
+
                     {activeStep === 7 && isSoleOwner && (
                         <div className="step-content">
                             <Typography variant="h5" align="center" gutterBottom className="step-title">
+                                Business Information
+                            </Typography>
+                            <Typography variant="h5" align="center" gutterBottom className="step-title-mini">
                                 What do you need the money for?
                             </Typography>
                             <Grid container spacing={2}>
@@ -820,6 +915,9 @@ const MultiStepFormExtended = () => {
                     {activeStep === 8 && !isSoleOwner && (ownershipPercentage > 50) && (
                         <div className="step-content">
                             <Typography variant="h5" align="center" gutterBottom className="step-title">
+                                Business Information
+                            </Typography>
+                            <Typography variant="h5" align="center" gutterBottom className="step-title-mini">
                                 What do you need the money for?
                             </Typography>
                             <Grid container spacing={2}>
@@ -845,6 +943,9 @@ const MultiStepFormExtended = () => {
                     {activeStep === 9 && !isSoleOwner && (ownershipPercentage > 50) && (
                         <div className="step-content">
                             <Typography variant="h5" align="center" gutterBottom className="step-title">
+                                Business Information
+                            </Typography>
+                            <Typography variant="h5" align="center" gutterBottom className="step-title-mini">
                                 When do you need the money?
                             </Typography>
                             <Grid container spacing={2}>
@@ -899,6 +1000,9 @@ const MultiStepFormExtended = () => {
                     {activeStep === 10 && !isSoleOwner && !addSecondOwner && (
                         <div className="step-content">
                             <Typography variant="h5" align="center" gutterBottom className="step-title">
+                                Business Information
+                            </Typography>
+                            <Typography variant="h5" align="center" gutterBottom className="step-title-mini">
                                 What do you need the money for?
                             </Typography>
                             <Grid container spacing={2}>
@@ -923,6 +1027,9 @@ const MultiStepFormExtended = () => {
                     {activeStep === 8 && isSoleOwner && (
                         <div className="step-content">
                             <Typography variant="h5" align="center" gutterBottom className="step-title">
+                                Business Information
+                            </Typography>
+                            <Typography variant="h5" align="center" gutterBottom className="step-title-mini">
                                 When do you need the money?
                             </Typography>
                             <Grid container spacing={2}>
@@ -947,6 +1054,9 @@ const MultiStepFormExtended = () => {
                     {activeStep === 11 && !isSoleOwner && !addSecondOwner && (
                         <div className="step-content">
                             <Typography variant="h5" align="center" gutterBottom className="step-title">
+                                Business Information
+                            </Typography>
+                            <Typography variant="h5" align="center" gutterBottom className="step-title-mini">
                                 When do you need the money?
                             </Typography>
                             <Grid container spacing={2}>
@@ -976,11 +1086,12 @@ const MultiStepFormExtended = () => {
                     {activeStep === 9 && !isSoleOwner && addSecondOwner && (
                         <div className="step-content">
                             <Typography variant="h5" align="center" gutterBottom className="step-title">
-                                Input Second Owner information
+                                Second Owner Personal Information
                             </Typography>
-                            <Typography variant="body1" align="center" gutterBottom className="sub-text">
-                                And get your loan offer now!
+                            <Typography variant="h5" align="center" gutterBottom className="step-title-mini">
+                                Please Enter Input Second Owner information
                             </Typography>
+
                             <Grid container spacing={2}>
                                 <Grid item xs={6}>
                                     <TextField
@@ -1042,7 +1153,10 @@ const MultiStepFormExtended = () => {
                     {activeStep === 10 && !isSoleOwner && addSecondOwner && (
                         <div className="step-content">
                             <Typography variant="h5" align="center" gutterBottom className="step-title">
-                                Second Owner Home Address
+                                Second Owner Personal Information
+                            </Typography>
+                            <Typography variant="h5" align="center" gutterBottom className="step-title-mini">
+                                Please Enter Second Owner Home Address
                             </Typography>
                             <Grid container spacing={2}>
                                 {Object.entries(secondOwnerHomeAddress).map(([key, value]) => (
@@ -1055,21 +1169,29 @@ const MultiStepFormExtended = () => {
                                             fullWidth
                                             margin="normal"
                                             required
+                                            inputProps={{
+                                                pattern: key === 'zip' ? '\\d{6}' : key === 'city' || key === 'state' ? '^[a-zA-Z]+$' : undefined,
+                                                title: key === 'zip' ? 'Zip code should be 6 digits' : key === 'city' || key === 'state' ? 'Only alphabets are allowed' : undefined
+                                            }}
                                         />
                                     </Grid>
                                 ))}
-                                <Grid item xs={12}>
-                                    <TextField
-                                        error={!!errorMessages.SSN}
-                                        label="SSN"
-                                        variant="outlined"
-                                        name="SSN"
-                                        value={secondOwnerTaxDetails.SSN}
-                                        onChange={handleInputChange(setSecondOwnerTaxDetails, setErrorMessages)}
-                                        fullWidth
-                                        required
-                                    />
-                                </Grid>
+
+                                {Object.values(secondOwnerHomeAddress).every(value => value.trim() !== '') && (
+                                    <Grid item xs={6} style={{ marginTop: '16px' }}>
+                                        <TextField
+                                            error={!!errorMessages.SSN}
+                                            label="SSN"
+                                            variant="outlined"
+                                            name="SSN"
+                                            value={secondOwnerTaxDetails.SSN}
+                                            onChange={handleInputChange(setSecondOwnerTaxDetails, setErrorMessages)}
+                                            fullWidth
+                                            required
+                                        />
+                                    </Grid>
+                                )}
+
                             </Grid>
                             <div className="step-navigation">
                                 <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
@@ -1084,7 +1206,10 @@ const MultiStepFormExtended = () => {
                     {activeStep === 11 && !isSoleOwner && addSecondOwner && (
                         <div className="step-content-date">
                             <Typography variant="h5" align="center" gutterBottom className="step-title">
-                                Second Owner Date of Birth
+                                Second Owner Personal Information
+                            </Typography>
+                            <Typography variant="h5" align="center" gutterBottom className="step-title-mini">
+                                Please Enter Second Owner Date of Birth
                             </Typography>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
 
@@ -1102,10 +1227,10 @@ const MultiStepFormExtended = () => {
                                 </Typography>
                             )}
                             <div className="step-navigation">
-                                <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
+                                <Button variant="contained" color="secondary" onClick={handleBack} className="back-button" style={{ padding: "18px 32px", fontSize: "16px", borderRadius: "8px" }}>
                                     Back
                                 </Button>
-                                <Button variant="contained" color="primary" onClick={() => handleNext('secondOwnerDOB')} className="next-button" disabled={!isStepValid(12)}>
+                                <Button variant="contained" color="primary" onClick={() => handleNext('secondOwnerDOB')} className="next-button" style={{ padding: "18px 32px", fontSize: "16px", borderRadius: "8px" }} disabled={!isStepValid(12)}>
                                     Next
                                 </Button>
                             </div>
@@ -1114,7 +1239,10 @@ const MultiStepFormExtended = () => {
                     {activeStep === 12 && !isSoleOwner && addSecondOwner && (
                         <div className="step-content">
                             <Typography variant="h5" align="center" gutterBottom className="step-title">
-                                Second Onwer Credit Score
+                                Second Owner Personal Information
+                            </Typography>
+                            <Typography variant="h5" align="center" gutterBottom className="step-title-mini">
+                                Please Select Second Onwer Credit Score
                             </Typography>
                             <Grid container spacing={2}>
                                 {[
@@ -1150,7 +1278,8 @@ const MultiStepFormExtended = () => {
                     )}
                     {activeStep === 13 && !isSoleOwner && addSecondOwner && (
                         <div className="step-content">
-                            <Typography variant="h5" align="center" gutterBottom className="step-title">
+
+                            <Typography variant="h5" align="center" gutterBottom className="step-title-mini">
                                 What do you need the money for?
                             </Typography>
                             <Grid container spacing={2}>
@@ -1178,7 +1307,8 @@ const MultiStepFormExtended = () => {
                     )}
                     {activeStep === 14 && !isSoleOwner && addSecondOwner && (
                         <div className="step-content">
-                            <Typography variant="h5" align="center" gutterBottom className="step-title">
+
+                            <Typography variant="h5" align="center" gutterBottom className="step-title-mini">
                                 When do you need the money?
                             </Typography>
                             <Grid container spacing={2}>
