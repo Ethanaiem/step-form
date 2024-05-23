@@ -5,7 +5,7 @@ import 'react-phone-input-2/lib/style.css';
 
 import { useNavigate } from 'react-router-dom';
 import { db } from './firebase.config';
-import { collection, addDoc, getDocs, query, where } from 'firebase/firestore';
+import { collection, addDoc, getDocs, query, where, setDoc } from 'firebase/firestore';
 import './MultiStepForm.css';
 import LottieAnimation from './LottieAnimation';
 import FinishingAnimation from './FinishingAnimation';
@@ -284,8 +284,9 @@ const MultiStepForm = () => {
         try {
             const q = query(collection(db, 'loanApplications'), where('email', '==', formData.email));
             const querySnapshot = await getDocs(q);
-
+    
             if (querySnapshot.empty) {
+                // If no existing application with the email, add a new document
                 await addDoc(collection(db, 'loanApplications'), {
                     loanAmount,
                     timePeriod,
@@ -295,19 +296,31 @@ const MultiStepForm = () => {
                     ...formData
                 });
                 setMessage('You have been pre-approved successfully!');
+                setPreApproved(true); // Assuming you want to set this only when new doc is added
             } else {
-                setMessage('You have been pre-approved successfully!');
-                setPreApproved(true); // Set pre-approved state
+                // If application with the email already exists, replace it with specific fields only
+                querySnapshot.forEach(async (doc) => {
+                    await setDoc(doc.ref, {
+                        loanAmount,
+                        timePeriod,
+                        monthlyRevenue,
+                        creditScore,
+                        SSN: taxDetails.SSN,
+                        ...formData
+                    });
+                });
+                setMessage('Application data updated with new details!');
+                setPreApproved(true); // Set pre-approved state if updated
             }
-
+    
             setLoading(false);
             setActiveStep(steps.length);
         } catch (error) {
-            console.error("Error adding document: ", error);
+            console.error("Error handling the application: ", error);
             setLoading(false);
         }
     };
-
+    
     const isStep4Valid = () => {
         const allFieldsFilled = Object.values(formData).every(value => value);
         const noErrors = Object.values(errors).every(error => !error);
