@@ -115,7 +115,7 @@ const MultiStepForm = () => {
                         loanAmount: loanAmount,
                         creditScore: creditScore,
                         monthlyRevenue: monthlyRevenue,
-                        ssn: taxDetails.SSN,
+                        // ssn: taxDetails.SSN,
                         extentedFormFields: extentedFormFields
                     }
                 })
@@ -219,11 +219,11 @@ const MultiStepForm = () => {
                     return 'Please enter a valid phone number (e.g., (123) 456-7890)';
                 }
                 break;
-            case 'SSN':
-                if (!/^\d{3}-\d{2}-\d{4}$/.test(value)) {
-                    return 'Please enter a valid SSN (e.g., 123-45-6789)';
-                }
-                break;
+            // case 'SSN':
+            //     if (!/^\d{3}-\d{2}-\d{4}$/.test(value)) {
+            //         return 'Please enter a valid SSN (e.g., 123-45-6789)';
+            //     }
+            //     break;
             default:
                 return '';
         }
@@ -249,36 +249,36 @@ const MultiStepForm = () => {
         });
     };
 
-    const handleInputChangeSSN = (setter, errorSetter) => (event) => {
-        const { name, value } = event.target;
-        const formattedValue = formatValue(value, name); // Format the input value
-        setter(prevState => ({ ...prevState, [name]: formattedValue }));
+    // const handleInputChangeSSN = (setter, errorSetter) => (event) => {
+    //     const { name, value } = event.target;
+    //     const formattedValue = formatValue(value, name); // Format the input value
+    //     setter(prevState => ({ ...prevState, [name]: formattedValue }));
 
-        // Validate SSN field
-        const error = validateField(name, formattedValue);
-        errorSetter(prevState => ({ ...prevState, [name]: error }));
-    };
+    //     // Validate SSN field
+    //     const error = validateField(name, formattedValue);
+    //     errorSetter(prevState => ({ ...prevState, [name]: error }));
+    // };
 
 
-    const formatValue = (value, name) => {
-        // Remove any non-digit characters
-        let formattedValue = value.replace(/\D/g, '');
+    // const formatValue = (value, name) => {
+    //     // Remove any non-digit characters
+    //     let formattedValue = value.replace(/\D/g, '');
 
-        // Apply formatting based on input type
-        if (name === 'SSN') {
-            if (formattedValue.length > 9) {
-                formattedValue = formattedValue.slice(0, 9);
-            }
-            if (formattedValue.length <= 3) {
-                formattedValue = formattedValue;
-            } else if (formattedValue.length <= 5) {
-                formattedValue = `${formattedValue.slice(0, 3)}-${formattedValue.slice(3, 5)}`;
-            } else {
-                formattedValue = `${formattedValue.slice(0, 3)}-${formattedValue.slice(3, 5)}-${formattedValue.slice(5, 9)}`;
-            }
-        }
-        return formattedValue;
-    };
+    //     // Apply formatting based on input type
+    //     if (name === 'SSN') {
+    //         if (formattedValue.length > 9) {
+    //             formattedValue = formattedValue.slice(0, 9);
+    //         }
+    //         if (formattedValue.length <= 3) {
+    //             formattedValue = formattedValue;
+    //         } else if (formattedValue.length <= 5) {
+    //             formattedValue = `${formattedValue.slice(0, 3)}-${formattedValue.slice(3, 5)}`;
+    //         } else {
+    //             formattedValue = `${formattedValue.slice(0, 3)}-${formattedValue.slice(3, 5)}-${formattedValue.slice(5, 9)}`;
+    //         }
+    //     }
+    //     return formattedValue;
+    // };
     const handleSubmit = async () => {
         setLoading(true);
         try {
@@ -291,7 +291,7 @@ const MultiStepForm = () => {
                     timePeriod,
                     monthlyRevenue,
                     creditScore,
-                    SSN: taxDetails.SSN,
+                    // SSN: taxDetails.SSN,
                     ...formData
                 });
                 setMessage('You have been pre-approved successfully!');
@@ -311,9 +311,9 @@ const MultiStepForm = () => {
     const isStep4Valid = () => {
         const allFieldsFilled = Object.values(formData).every(value => value);
         const noErrors = Object.values(errors).every(error => !error);
-        const hasSSN = !!taxDetails.SSN;
+        // const hasSSN = !!taxDetails.SSN;
     
-        return allFieldsFilled && noErrors && hasSSN;
+        return allFieldsFilled && noErrors ;
     };
 
     const changeForm = () => {
@@ -324,7 +324,7 @@ const MultiStepForm = () => {
                 loanAmount: loanAmount,
                 creditScore: creditScore,
                 monthlyRevenue: monthlyRevenue,
-                ssn: taxDetails.SSN,
+                // ssn: taxDetails.SSN,
                 extentedFormFields: extentedFormFields
             }
         })
@@ -390,9 +390,10 @@ const MultiStepForm = () => {
                                     <Button variant="contained" onClick={handleNext} className="loan-next-button" disabled={!loanAmount}>
                                         GET LOANS OFFERS
                                     </Button>
-                                    <Button variant="contained" color="secondary" className="loan-next-button" onClick={handleOpenModal}>
+                                    {/* <Button variant="contained" color="secondary" className="loan-next-button" onClick={handleOpenModal}>
                                         Resume Form
-                                    </Button>
+                                    </Button> */}
+                                    <p style={{color:"#154192",fontSize:"18px",fontWeight:"700",cursor:"pointer"}} onClick={handleOpenModal}>Resume Form</p>
                                 </Box>
                                 <Modal
                                     open={isModalOpen}
@@ -659,7 +660,7 @@ const MultiStepForm = () => {
                                         helperText={errors.businessName && 'This field cannot be empty'}
                                     />
                                 </Grid>
-                                <Grid item xs={12} style={{ marginTop: "15px" }}>
+                                {/* <Grid item xs={12} style={{ marginTop: "15px" }}>
                                     <TextField
                                         error={!!errorMessages.SSN}
                                         label="SSN"
@@ -671,7 +672,7 @@ const MultiStepForm = () => {
                                         required
                                     />
                                     {errorMessages.SSN && <Typography variant="caption" color="error">{errorMessages.SSN}</Typography>}
-                                </Grid>
+                                </Grid> */}
                             </Grid>
                             <FormControlLabel
                                 control={<Checkbox name="agreement" checked={formData.agreement} onChange={handleInputChange} />}
@@ -696,7 +697,7 @@ const MultiStepForm = () => {
                                 <svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 24 24"><path fill="#1e2a78" d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm-1.706 18.207l-4.793-4.793 1.414-1.414 3.379 3.379 7.379-7.379 1.414 1.414-8.793 8.793z" /></svg>
                             </div> */}
                             <FinishingAnimation />
-                            <Typography variant="h5" align="center" gutterBottom>
+                            <Typography variant="h5" align="center" gutterBottom style={{marginBottom:"20px"}}>
                                 {message}
                             </Typography>
                             <Button variant="contained" color="primary" className="next-button" onClick={changeForm}>

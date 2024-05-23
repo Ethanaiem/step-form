@@ -24,14 +24,14 @@
     position: relative;
     z-index: 2;
     /* Ensure it is in front of the Lottie animation */
-    width: 75px;
+    width: 45px;
     /* Adjust size as needed */
     height: auto;
     /* Maintain aspect ratio */
     display: block;
     margin: 0 auto;
     /* Center the image horizontally */
-    top: 35%;
+    top: 42%;
     /* transform: translateY(-50%); */
     /* Center the image vertically */
 }

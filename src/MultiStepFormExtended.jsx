@@ -206,7 +206,7 @@ const MultiStepFormExtended = () => {
     const formatValue = (value, name) => {
         let formattedValue = value;
 
-        if (name === 'ITIN') {
+        if (name === 'SSN' || name === 'ITIN') {
             // Remove non-digit characters for ITIN
             formattedValue = formattedValue.replace(/\D/g, '');
             if (formattedValue.length > 9) {
@@ -428,7 +428,7 @@ const MultiStepFormExtended = () => {
             case 1:
                 return address.city && address.state && address.street && address.unit && address.zip && taxDetails.EIN && !errorMessages.EIN;
             case 4:
-                return homeAddress.city && homeAddress.state && homeAddress.street && homeAddress.unit && homeAddress.zip
+                return homeAddress.city && homeAddress.state && homeAddress.street && homeAddress.unit && homeAddress.zip && taxDetails.SSN && !errorMessages.SSN
             case 5:
                 return dateOfBirth && !errorMessage;
             // case 6:
@@ -596,6 +596,14 @@ const MultiStepFormExtended = () => {
 
         }
     }, [secondOwnerCreditScore])
+
+    useEffect(() => {
+        if (isStepValid(4)) {
+            updateFirestoreField('homeAddress', homeAddress);
+            updateFirestoreField('SSN', taxDetails.SSN); // Ensure SSN is updated in Firestore
+            updateFirestoreField('activeStep', activeStep);
+        }
+    }, [homeAddress, taxDetails.SSN]);
 
     useEffect(() => {
         setIsFormValid(isStepValid(activeStep));
@@ -766,17 +774,32 @@ const MultiStepFormExtended = () => {
                             <Grid container spacing={2}>
                                 {Object.entries(homeAddress).map(([key, value]) => (
                                     <Grid item xs={12} sm={6} key={key}>
-                                        <TextField label={key.charAt(0).toUpperCase() + key.slice(1)} name={key} value={value} onChange={handleInputChange(setHomeAddress, setErrorMessages)} fullWidth margin="normal" required />
+                                        <TextField label={key.charAt(0).toUpperCase() + key.slice(1)} name={key} value={value} onChange={handleInputChange(setHomeAddress, setErrorMessages)} fullWidth margin="normal" required
+
+                                        />
                                     </Grid>
                                 ))}
-
+                                {Object.values(homeAddress).every(value => value.trim() !== '') && (
+                                    <Grid item xs={6} style={{ marginTop: "16px" }}>
+                                        <TextField
+                                            error={!!errorMessages.SSN}
+                                            label="SSN"
+                                            variant="outlined"
+                                            name="SSN"
+                                            value={taxDetails.SSN}
+                                            onChange={handleInputChange(setTaxDetails, setErrorMessages)}
+                                            fullWidth
+                                            required
+                                        />
+                                    </Grid>
+                                )}
                             </Grid>
 
                             <div className="step-navigation">
                                 <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
                                     Back
                                 </Button>
-                                <Button variant="contained" color="primary" onClick={() => handleNext('homeAddress')} className="next-button" disabled={!isStepValid(4)}>
+                                <Button variant="contained" color="primary" onClick={() => handleNext('homeAddress', 'SSN')} className="next-button" disabled={!isStepValid(4)}>
                                     Next
                                 </Button>
                             </div>
@@ -1089,7 +1112,7 @@ const MultiStepFormExtended = () => {
                                 Second Owner Personal Information
                             </Typography>
                             <Typography variant="h5" align="center" gutterBottom className="step-title-mini">
-                                Please Enter Input Second Owner information
+                                Please Input Second Owner information
                             </Typography>
 
                             <Grid container spacing={2}>
