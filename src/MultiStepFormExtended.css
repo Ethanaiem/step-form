@@ -47,7 +47,7 @@
 .business-entity-button.selected, .home-based-button.selected {
     background-color: #154192 !important;
     border-color:#154192;
-    color:#154192;
+    color:#fff;
 }
 
 .step-navigation {

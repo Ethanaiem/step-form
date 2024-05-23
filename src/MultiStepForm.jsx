@@ -1,6 +1,6 @@
 // MultiStepForm.jsx
-import { useState } from 'react';
-import { TextField, Button, Stepper, Step, StepLabel, Typography, Grid } from '@mui/material';
+import { useState, useEffect} from 'react';
+import { TextField, Button, Stepper, Step, StepLabel, Typography, Grid, FormControlLabel, Checkbox, Box, Modal } from '@mui/material';
 import 'react-phone-input-2/lib/style.css';
 
 import { useNavigate } from 'react-router-dom';
@@ -16,6 +16,8 @@ import img3 from './assets/66398c2d8e95b9624997780c_2.png'
 
 const MultiStepForm = () => {
     const [activeStep, setActiveStep] = useState(0);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [resumeEmail, setResumeEmail] = useState('');
     const [loanAmount, setLoanAmount] = useState('');
     const [timePeriod, setTimePeriod] = useState('');
     const [monthlyRevenue, setMonthlyRevenue] = useState('');
@@ -26,7 +28,7 @@ const MultiStepForm = () => {
         email: '',
         contactNumber: '',
         businessName: '',
-        // agreement: false,
+        agreement: false,
     });
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState('');
@@ -40,6 +42,7 @@ const MultiStepForm = () => {
     });
     const [taxDetails, setTaxDetails] = useState({ SSN: '', });
     const [errorMessages, setErrorMessages] = useState({ SSN: '', });
+    const [extentedFormFields, setExtendedFormFields] = useState([])
     // eslint-disable-next-line no-unused-vars
     const [preApproved, setPreApproved] = useState(false);
 
@@ -47,7 +50,84 @@ const MultiStepForm = () => {
 
     const steps = ['1', '2', '3', '4', '5'];
 
-    const handleNext = () => {
+    const handleOpenModal = () => setIsModalOpen(true);
+    const handleCloseModal = () => setIsModalOpen(false);
+
+    const handleEmailChange = (event) => {
+        setResumeEmail(event.target.value);
+    };
+    const handleResumeForm = async () => {
+        const q = query(collection(db, 'loanApplications'), where('email', '==', resumeEmail));
+        const querySnapshot = await getDocs(q);
+        if (querySnapshot.empty) {
+            alert("No records found for this email.");
+            return;
+        }
+    
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            const formDataKeys = ['firstName', 'lastName', 'email', 'contactNumber', 'businessName', 'agreement'];
+            const otherKnownKeys = ['SSN', 'loanAmount', 'timePeriod', 'monthlyRevenue', 'creditScore'];
+            const filteredData = {};
+            const extendedFormFields = {};
+    
+            Object.keys(data).forEach(key => {
+                if (formDataKeys.includes(key)) {
+                    filteredData[key] = data[key];
+                } else if (otherKnownKeys.includes(key)) {
+                    switch (key) {
+                        case 'SSN':
+                            setTaxDetails(prev => ({ ...prev, SSN: data[key] }));
+                            break;
+                        case 'loanAmount':
+                            setLoanAmount(data[key]);
+                            break;
+                        case 'timePeriod':
+                            setTimePeriod(data[key]);
+                            break;
+                        case 'monthlyRevenue':
+                            setMonthlyRevenue(data[key]);
+                            break;
+                        case 'creditScore':
+                            setCreditScore(data[key]);
+                            break;
+                        default:
+                            break;
+                    }
+                } else {
+                    extendedFormFields[key] = data[key];
+                }
+            });
+    
+            // Update formData state
+            setFormData(prev => ({ ...prev, ...filteredData }));
+            console.log(filteredData, 'filteredData')
+            // Update a new state for handling additional, unexpected data
+            setExtendedFormFields(extendedFormFields);
+    
+            // Check if `businessEntity` is not empty and act accordingly
+            if (extendedFormFields['businessEntity'] && extendedFormFields['businessEntity'].trim() !== "") {
+                // Call changeForm or similar function to change the form or navigate away
+                localStorage.setItem('email', formData.email)
+                navigate('/extended-form', {
+                    state: {
+                        formData: filteredData,
+                        loanAmount: loanAmount,
+                        creditScore: creditScore,
+                        monthlyRevenue: monthlyRevenue,
+                        ssn: taxDetails.SSN,
+                        extentedFormFields: extentedFormFields
+                    }
+                })
+            } else {
+                // Otherwise, resume at the designated step
+                setActiveStep(4);
+            }
+        });
+    };
+    
+
+    const handleNext = async () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
     };
 
@@ -229,18 +309,23 @@ const MultiStepForm = () => {
     };
 
     const isStep4Valid = () => {
-        return Object.values(formData).every(value => value) && Object.values(errors).every(error => !error) && !!taxDetails.SSN;
+        const allFieldsFilled = Object.values(formData).every(value => value);
+        const noErrors = Object.values(errors).every(error => !error);
+        const hasSSN = !!taxDetails.SSN;
+    
+        return allFieldsFilled && noErrors && hasSSN;
     };
 
-
     const changeForm = () => {
+        localStorage.setItem('email', formData.email)
         navigate('/extended-form', {
             state: {
                 formData: formData,
                 loanAmount: loanAmount,
                 creditScore: creditScore,
-                monthlyRevenue: monthlyRevenue
-
+                monthlyRevenue: monthlyRevenue,
+                ssn: taxDetails.SSN,
+                extentedFormFields: extentedFormFields
             }
         })
     }
@@ -301,11 +386,37 @@ const MultiStepForm = () => {
                                     className="loan-amount-input"
                                 />
 
-                                <div className="step-navigation">
+                                <Box display={'flex'} flexDirection={'column'} className="step-navigation">
                                     <Button variant="contained" onClick={handleNext} className="loan-next-button" disabled={!loanAmount}>
                                         GET LOANS OFFERS
                                     </Button>
-                                </div>
+                                    <Button variant="contained" color="secondary" className="loan-next-button" onClick={handleOpenModal}>
+                                        Resume Form
+                                    </Button>
+                                </Box>
+                                <Modal
+                                    open={isModalOpen}
+                                    onClose={handleCloseModal}
+                                    aria-labelledby="modal-modal-title"
+                                    aria-describedby="modal-modal-description"
+                                >
+                                    <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 400, bgcolor: 'background.paper', boxShadow: 24, p: 4 }}>
+                                        <Typography id="modal-modal-title" variant="h6" component="h2">
+                                            Enter your email to resume the form
+                                        </Typography>
+                                        <TextField
+                                            fullWidth
+                                            label="Email Address"
+                                            variant="outlined"
+                                            value={resumeEmail}
+                                            onChange={handleEmailChange}
+                                            margin="normal"
+                                        />
+                                        <Button onClick={handleResumeForm} variant="contained" color="primary" fullWidth>
+                                            Resume
+                                        </Button>
+                                    </Box>
+                                </Modal>
                                 <p style={{ fontSize: "14px" }}>It’s FREE and won’t affect your credit score.</p>
                             </div>
                         </>
@@ -349,6 +460,7 @@ const MultiStepForm = () => {
                                 <Button variant="contained" color="secondary" onClick={handleBack} className="loan-next-button">
                                     Back
                                 </Button>
+
                                 {/* <Button
                                     variant="contained"
                                     color="primary"
@@ -561,12 +673,12 @@ const MultiStepForm = () => {
                                     {errorMessages.SSN && <Typography variant="caption" color="error">{errorMessages.SSN}</Typography>}
                                 </Grid>
                             </Grid>
-                            {/* <FormControlLabel
+                            <FormControlLabel
                                 control={<Checkbox name="agreement" checked={formData.agreement} onChange={handleInputChange} />}
                                 // eslint-disable-next-line react/no-unescaped-entities
                                 label={<Typography variant="body2">By selecting "Get Loan Offers" you agree to our <a href="https://www.klendify.com/privacy-policy" target="_blank">Privacy Policy</a>.</Typography>}
                                 className="agreement-checkbox"
-                            /> */}
+                            />
                             <div className="step-navigation">
                                 {/* <Button variant="contained" color="secondary" onClick={handleBack} className="back-button">
                                     Back
