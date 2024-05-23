@@ -305,7 +305,7 @@ const MultiStepForm = () => {
                         timePeriod,
                         monthlyRevenue,
                         creditScore,
-                        SSN: taxDetails.SSN,
+                        // SSN: taxDetails.SSN,
                         ...formData
                     });
                 });
