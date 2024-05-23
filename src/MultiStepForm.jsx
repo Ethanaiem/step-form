@@ -5,7 +5,7 @@ import 'react-phone-input-2/lib/style.css';
 
 import { useNavigate } from 'react-router-dom';
 import { db } from './firebase.config';
-import { collection, addDoc, getDocs, query, where } from 'firebase/firestore';
+import { collection, addDoc, getDocs, query, where, setDoc } from 'firebase/firestore';
 import './MultiStepForm.css';
 import LottieAnimation from './LottieAnimation';
 import FinishingAnimation from './FinishingAnimation';
@@ -270,6 +270,7 @@ const MultiStepForm = () => {
                 formattedValue = formattedValue.slice(0, 9);
             }
             if (formattedValue.length <= 3) {
+                // eslint-disable-next-line no-self-assign
                 formattedValue = formattedValue;
             } else if (formattedValue.length <= 5) {
                 formattedValue = `${formattedValue.slice(0, 3)}-${formattedValue.slice(3, 5)}`;
@@ -279,13 +280,43 @@ const MultiStepForm = () => {
         }
         return formattedValue;
     };
+    // const handleSubmit = async () => {
+    //     setLoading(true);
+    //     try {
+    //         const q = query(collection(db, 'loanApplications'), where('email', '==', formData.email));
+    //         const querySnapshot = await getDocs(q);
+
+    //         if (querySnapshot.empty) {
+    //             await addDoc(collection(db, 'loanApplications'), {
+    //                 loanAmount,
+    //                 timePeriod,
+    //                 monthlyRevenue,
+    //                 creditScore,
+    //                 SSN: taxDetails.SSN,
+    //                 ...formData
+    //             });
+    //             setMessage('You have been pre-approved successfully!');
+    //         } else {
+    //             setMessage('You have been pre-approved successfully!');
+    //             setPreApproved(true); // Set pre-approved state
+    //         }
+
+    //         setLoading(false);
+    //         setActiveStep(steps.length);
+    //     } catch (error) {
+    //         console.error("Error adding document: ", error);
+    //         setLoading(false);
+    //     }
+    // };
+
     const handleSubmit = async () => {
         setLoading(true);
         try {
             const q = query(collection(db, 'loanApplications'), where('email', '==', formData.email));
             const querySnapshot = await getDocs(q);
-
+    
             if (querySnapshot.empty) {
+                // If no existing application with the email, add a new document
                 await addDoc(collection(db, 'loanApplications'), {
                     loanAmount,
                     timePeriod,
@@ -295,19 +326,31 @@ const MultiStepForm = () => {
                     ...formData
                 });
                 setMessage('You have been pre-approved successfully!');
+                setPreApproved(true); // Assuming you want to set this only when new doc is added
             } else {
-                setMessage('You have been pre-approved successfully!');
-                setPreApproved(true); // Set pre-approved state
+                // If application with the email already exists, replace it with specific fields only
+                querySnapshot.forEach(async (doc) => {
+                    await setDoc(doc.ref, {
+                        loanAmount,
+                        timePeriod,
+                        monthlyRevenue,
+                        creditScore,
+                        SSN: taxDetails.SSN,
+                        ...formData
+                    });
+                });
+                setMessage('Application data updated with new details!');
+                setPreApproved(true); // Set pre-approved state if updated
             }
-
+    
             setLoading(false);
             setActiveStep(steps.length);
         } catch (error) {
-            console.error("Error adding document: ", error);
+            console.error("Error handling the application: ", error);
             setLoading(false);
         }
     };
-
+    
     const isStep4Valid = () => {
         const allFieldsFilled = Object.values(formData).every(value => value);
         const noErrors = Object.values(errors).every(error => !error);

@@ -100,6 +100,10 @@ const MultiStepFormExtended = () => {
                         if (data.EIN) setTaxDetails(prev => ({ ...prev, EIN: data.EIN }));
                         if (data.secondOwnerTaxDetails) setSecondOwnerTaxDetails({ SSN: data.secondOwnerTaxDetails });
                         if (data.activeStep) setActiveStep(data.activeStep);
+                        if(data.monthlyRevenue) setPrevFormData(prev => ({ ...prev, monthlyRevenue: data.monthlyRevenue }));
+                        if(data.SSN) setPrevFormData(prev => ({ ...prev, SSN: data.SSN }));
+                        if(data.creditScore) setPrevFormData(prev => ({ ...prev, creditScore: data.creditScore }));
+                        if(data.loanAmount) setPrevFormData(prev => ({ ...prev, loanAmount: data.loanAmount }));
 
                         setIsSoleOwner(data.isSoleOwner);
                         setLoanPurpose(data.loanPurpose);
@@ -166,7 +170,7 @@ const MultiStepFormExtended = () => {
     };
     const handleInputChange = (setter, errorSetter) => (event) => {
         const { name, value } = event.target;
-        const formattedValue = formatValue(value, name); // Format the input value
+        let formattedValue = formatValue(value, name); // Format the input value
         setter(prevState => ({ ...prevState, [name]: formattedValue }));
 
         // Regular expression patterns for SSN, ITIN, and EIN formats
@@ -326,7 +330,7 @@ const MultiStepFormExtended = () => {
             return parseInt(monthlyRevenue.replace(/[$,\s]/g, ''));
         };
 
-        const monthlyRevenue = location.state.monthlyRevenue; // Assuming this is the selected revenue string
+        const monthlyRevenue = location.state.monthlyRevenue || prevFormData.monthlyRevenue; // Assuming this is the selected revenue string
         const annualRevenue = parseMonthlyRevenue(monthlyRevenue) * 12;
         console.log(annualRevenue, "annual Revenue")
 
@@ -335,17 +339,17 @@ const MultiStepFormExtended = () => {
             owner_one_email: prevFormData.email,
             owner_one_contact: prevFormData.contactNumber.toString(),
             owner_one_dob: formatDate(dateOfBirth),
-            owner_one_ssn: taxDetails.SSN.toString() || taxDetails.ITIN.toString(),
+            owner_one_ssn: prevFormData.SSN.toString(),
             owner_one_percentage: ownershipPercentage.toString(),
             owner_one_address: homeAddress.unit + homeAddress.street + homeAddress.city + homeAddress.state,
             owner_one_city: homeAddress.city,
             owner_one_state: homeAddress.state,
             owner_one_zip: homeAddress.zip.toString(),
-            owner_one_cs: location.state.creditScore.toString(),
+            owner_one_cs:  prevFormData.creditScore,
             owner_two_name: secondOwnerFormData.firstName + secondOwnerFormData.lastName,
             owner_two_email: secondOwnerFormData.email,
             owner_two_contact: secondOwnerFormData.contactNumber.toString(),
-            // owner_two_dob: formatDate(secondOwnerDOB),
+            owner_two_dob: formatDate(secondOwnerDOB),
             owner_two_ssn: secondOwnerTaxDetails.SSN.toString() || secondOwnerTaxDetails.ITIN.toString(),
             owner_two_percentage: (100 - ownershipPercentage).toString(),
             owner_two_address: secondOwnerHomeAddress.unit + secondOwnerHomeAddress.street + secondOwnerHomeAddress.city + secondOwnerHomeAddress.state,
@@ -361,9 +365,10 @@ const MultiStepFormExtended = () => {
             business_start_date: formatDate(registrationDate),
             use_of_loan: loanPurpose,
             company_name: prevFormData.businessName,
-            loan_amount: location.state.loanAmount.toString(),
+            loan_amount: location.state.loanAmount.toString() || prevFormData.loanAmount,
             annual_revenue: annualRevenue.toString(),
-            business_ein: taxDetails.EIN.toString()
+            business_ein: taxDetails.EIN.toString(),
+            business_number: prevFormData.contactNumber
         };
 
         if (secondOwnerDOB !== 0) {  // Only include if secondOwnerDOB is not zero
@@ -371,6 +376,7 @@ const MultiStepFormExtended = () => {
         }
         e.preventDefault();
         try {
+            // 'https://us-central1-ethan-klendify.cloudfunctions.net/api/form'
             const response = await axios.post('https://us-central1-ethan-klendify.cloudfunctions.net/api/form', formData, { withCredentials: true });
             window.location.href = response.data.url; // Redirect to the DocuSign signing ceremony
         } catch (error) {
@@ -486,7 +492,7 @@ const MultiStepFormExtended = () => {
     }, [address, taxDetails.EIN]);
 
     useEffect(() => {
-        if (isHomeBased !== null) { // Only run the update if businessEntity has been set
+        if (isHomeBased !== null && isHomeBased !== undefined) { // Only run the update if businessEntity has been set
             updateFirestoreField('isHomebased', isHomeBased);
             updateFirestoreField('activeStep', activeStep);
 
