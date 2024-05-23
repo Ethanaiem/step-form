@@ -13,7 +13,7 @@
 
 .title {
     font-family: "Montserrat", sans-serif !important;
-    font-size: 18px !important;
+    font-size: 28px !important;
     font-weight: bold !important;
     color: #1e2a78 !important;
     margin-bottom: 10px !important;
@@ -37,8 +37,16 @@
 
 .step-title {
     font-family: "Montserrat", sans-serif !important;
-    font-size: 52px !important;
+    font-size: 40px !important;
     font-weight: bold !important;
+    color: #333 !important;
+    margin-bottom: 20px !important;
+}
+
+.step-title-mini {
+    font-family: "Montserrat", sans-serif !important;
+    font-size: 25px !important;
+    /* font-weight: bold !important; */
     color: #333 !important;
     margin-bottom: 20px !important;
 }
@@ -74,7 +82,7 @@
     color: #1e2a78 !important;
     border-radius: 5px !important;
     font-family: "Montserrat", sans-serif !important;
-
+    margin-left: 10px !important;
 }
 
 .time-period-button:hover {
@@ -95,22 +103,7 @@
     justify-content: space-between;
 }
 
-.loan-next-button {
-    font-family: "Montserrat", sans-serif !important;
-    background-color: #dae8fc !important;
-    /* Light blue background */
-    color: #333 !important;
-    /* Dark text color for contrast */
-    border: none !important;
-    width: 100% !important;
-    padding: 10px 20px !important;
-    border-radius: 5px !important;
-    /* Rounded corners */
-    font-size: 20px !important;
-    font-weight: 600 !important;
-    cursor: pointer !important;
-    transition: background-color 0.3s ease !important;
-}
+
 
 .loan-next-button:disabled {
     cursor: no-drop !important;
@@ -125,7 +118,7 @@
 
 .next-button,
 .back-button {
-    background-color: #154192 !important;
+    background-color: #dae8fc !important;
     color: #fff !important;
     font-weight: bold;
     margin-top: 20px;
@@ -136,10 +129,6 @@
     margin-right: 10px;
 }
 
-.next-button:disabled {
-    background-color: #e0e0e0 !important;
-    color: #888 !important;
-}
 
 .sub-text {
     color: #154192 !important;
@@ -160,4 +149,27 @@
     align-items: center;
     justify-content: center;
     margin-top: 50px;
+
+}
+
+.next-button:disabled {
+    background-color: #e0e0e0 !important;
+    color: #888 !important;
+}
+
+.loan-next-button {
+    font-family: "Montserrat", sans-serif !important;
+    background-color: #e9edf2 !important;
+    /* Light blue background */
+    color: white !important;
+    /* White text color */
+    border: none !important;
+    width: 100% !important;
+    padding: 10px 20px !important;
+    border-radius: 5px !important;
+    /* Rounded corners */
+    font-size: 20px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: background-color 0.3s ease !important;
 }

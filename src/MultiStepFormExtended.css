@@ -45,31 +45,16 @@
 }
 
 .business-entity-button.selected, .home-based-button.selected {
-    background-color: #e0f0ff;
+    background-color: #154192 !important;
     border-color:#154192;
-    color:#154192;
+    color:#fff;
 }
 
 .step-navigation {
     margin-top: 20px;
 }
 
-.next-button, .back-button {
-    background-color: #d1e0ff; /* Light blue background */
-    color: #333;
-    font-weight: bold;
-    margin-top: 20px;
-}
 
-.back-button {
-    background-color: #f0f0f0; /* Light grey background for back button */
-    margin-right: 10px;
-}
-
-.next-button:disabled {
-    background-color: #e0e0e0; /* Disabled state */
-    color: #888;
-}
 
 /* Additional styles for step 9 */
 .step-content button {
@@ -92,14 +77,37 @@
     color: #333; /* Dark font for better contrast */
     border: 1px solid #ccc; /* Subtle borders for buttons */
 }
-
-.step-content button.Mui-contained {
-    background-color: #d1e0ff; /* Light blue background for selected/active button */
-    color: #333; /* Dark font for contrast */
+.step-content .MuiButton-contained {
+    background-color: #154192 !important; /* Background color for contained buttons */
+    color: #FFFFFF; /* Text color for contained buttons */
 }
+
+.step-content .MuiButton-contained:hover {
+    background-color: #154192 !important; /* Background color for contained buttons on hover */
+    color: #FFFFFF; /* Text color for contained buttons on hover */
+}
+
+
 
 /* Additional styles for the slider */
 .MuiSlider-root {
-    color: #154192; /* Color for the slider thumb and track */
+    color: #154192 !important; /* Color for the slider thumb and track */
     margin: 20px; /* Spacing around the slider for better interaction */
 }
+
+.back-button {
+    background-color: #f0f0f0; /* Light grey background for back button */
+    margin-right: 10px;
+}
+
+.next-button:disabled {
+    background-color: #e0e0e0 !important;  /* Disabled state */
+    color: #888;
+    }
+
+    .next-button, .back-button {
+        background-color: #154192 !important; /* Light blue background */
+        color: #333;
+        font-weight: bold;
+        margin-top: 20px;
+    }
