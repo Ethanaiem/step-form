@@ -339,7 +339,7 @@ const MultiStepFormExtended = () => {
             owner_one_email: prevFormData.email,
             owner_one_contact: prevFormData.contactNumber.toString(),
             owner_one_dob: formatDate(dateOfBirth),
-            owner_one_ssn: taxDetails.SSN?.toString() || ,
+            owner_one_ssn: taxDetails.SSN?.toString(),
             owner_one_percentage: ownershipPercentage?.toString(),
             owner_one_address: homeAddress.unit + homeAddress.street + homeAddress.city + homeAddress.state,
             owner_one_city: homeAddress.city,
