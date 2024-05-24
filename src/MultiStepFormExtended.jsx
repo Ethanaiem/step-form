@@ -101,13 +101,13 @@ const MultiStepFormExtended = () => {
                         if (data.secondOwnerTaxDetails) setSecondOwnerTaxDetails({ SSN: data.secondOwnerTaxDetails });
                         if (data.activeStep) setActiveStep(data.activeStep);
                         if(data.monthlyRevenue) setPrevFormData(prev => ({ ...prev, monthlyRevenue: data.monthlyRevenue }));
-                        if(data.SSN) setPrevFormData(prev => ({ ...prev, SSN: data.SSN }));
+                        if(data.SSN) setTaxDetails(prev => ({ ...prev, SSN: data.SSN }));
                         if(data.creditScore) setPrevFormData(prev => ({ ...prev, creditScore: data.creditScore }));
                         if(data.loanAmount) setPrevFormData(prev => ({ ...prev, loanAmount: data.loanAmount }));
+                        if(data.ownershipPercentage) (setOwnershipPercentage(data.ownershipPercentage));
 
                         setIsSoleOwner(data.isSoleOwner);
                         setLoanPurpose(data.loanPurpose);
-                        setOwnershipPercentage(data.ownershipPercentage);
                         setAddSecondOwner(data.addSecondOwner);
                         setIsHomeBased(data.isHomeBased);
                         setFundingTime(data.fundingTime);
@@ -339,8 +339,8 @@ const MultiStepFormExtended = () => {
             owner_one_email: prevFormData.email,
             owner_one_contact: prevFormData.contactNumber.toString(),
             owner_one_dob: formatDate(dateOfBirth),
-            owner_one_ssn: prevFormData.SSN.toString(),
-            owner_one_percentage: ownershipPercentage.toString(),
+            owner_one_ssn: taxDetails.SSN?.toString() || ,
+            owner_one_percentage: ownershipPercentage?.toString(),
             owner_one_address: homeAddress.unit + homeAddress.street + homeAddress.city + homeAddress.state,
             owner_one_city: homeAddress.city,
             owner_one_state: homeAddress.state,
@@ -348,15 +348,15 @@ const MultiStepFormExtended = () => {
             owner_one_cs:  prevFormData.creditScore,
             owner_two_name: secondOwnerFormData.firstName + secondOwnerFormData.lastName,
             owner_two_email: secondOwnerFormData.email,
-            owner_two_contact: secondOwnerFormData.contactNumber.toString(),
+            owner_two_contact: secondOwnerFormData.contactNumber?.toString(),
             owner_two_dob: formatDate(secondOwnerDOB),
-            owner_two_ssn: secondOwnerTaxDetails.SSN.toString() || secondOwnerTaxDetails.ITIN.toString(),
+            owner_two_ssn: secondOwnerTaxDetails?.SSN.toString(),
             owner_two_percentage: (100 - ownershipPercentage).toString(),
             owner_two_address: secondOwnerHomeAddress.unit + secondOwnerHomeAddress.street + secondOwnerHomeAddress.city + secondOwnerHomeAddress.state,
             owner_two_city: secondOwnerHomeAddress.city,
             owner_two_state: secondOwnerHomeAddress.state,
-            owner_two_zip: secondOwnerHomeAddress.zip.toString(),
-            owner_two_cs: secondOwnerCreditScore.toString(),
+            owner_two_zip: secondOwnerHomeAddress.zip?.toString(),
+            owner_two_cs: secondOwnerCreditScore?.toString(),
             business_address: address.unit + address.street + address.city + address.state,
             business_city: address.city,
             business_state: address.state,
