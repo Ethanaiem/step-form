@@ -127,35 +127,25 @@ const MultiStepFormExtended = () => {
                         if (data.ownerOneDOB) setDateOfBirth(parseFirestoreTimestamp(data.ownerOneDOB));
                         if (data.secondOwnerDOB) setSecondOwnerDOB(parseFirestoreTimestamp(data.secondOwnerDOB));
                     } else {
-                        console.log("No documents found for the provided email.");
+                        console.log("No documents forestore:");
                     }
                 } catch (error) {
-                    console.error("Error fetching data from Firestore:", error);
+                    console.error("Error fetching data from Fiemail change", error);
                 }
             }
         };
-
         fetchData();
-    }, [location.state?.formData?.email]); // Dependency on email change
+    }, [location.state?.formData?.email]);  // Dependency on und for the provided email."
 
 
 
 
-    // const handleNext = () => {
-    //     if (activeStep < totalSteps) {
-    //         setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    //     }
-    // };
-    const handleNext = (stepDataKey) => {
-        if (stepDataKey && !isStepValid(activeStep)) {
-            return;
-        }
-        if (activeStep === 14) {
-            handleSubmit();
-        } else {
+    const handleNext = () => {
+        if (activeStep < totalSteps) {
             setActiveStep((prevActiveStep) => prevActiveStep + 1);
         }
     };
+
 
     const handleCreditScoreSelect = (score) => {
         setSecondOwnerCreditScore(score);
@@ -876,13 +866,13 @@ const MultiStepFormExtended = () => {
                                 Are you the sole owner?
                             </Typography>
                             <Grid container spacing={2} justifyContent="center">
-                                <Grid item>
-                                    <Button variant={isSoleOwner ? "contained" : "outlined"} onClick={() => setIsSoleOwner(true)} >
+                                <Grid item xs={12} sm={6} >
+                                    <Button variant="outlined" className={`home-based-button ${isSoleOwner ? "selected" : ""}`} fullWidth onClick={() => setIsSoleOwner(true)} >
                                         Yes
                                     </Button>
                                 </Grid>
-                                <Grid item>
-                                    <Button variant={!isSoleOwner ? "contained" : "outlined"} onClick={() => setIsSoleOwner(false)}>
+                                <Grid item xs={12} sm={6} >
+                                    <Button variant="outlined" fullWidth className={`home-based-button ${!isSoleOwner ? "selected" : ""}`} onClick={() => setIsSoleOwner(false)}>
                                         No
                                     </Button>
                                 </Grid>
@@ -1033,12 +1023,12 @@ const MultiStepFormExtended = () => {
                             </Typography>
                             <Grid container spacing={2} justifyContent="center">
                                 <Grid item>
-                                    <Button variant={addSecondOwner ? "contained" : "outlined"} onClick={() => setAddSecondOwner(true)} >
+                                    <Button variant="outlined" className={`home-based-button ${addSecondOwner ? "selected" : ""}`} onClick={() => setAddSecondOwner(true)} >
                                         Yes
                                     </Button>
                                 </Grid>
                                 <Grid item>
-                                    <Button variant={!addSecondOwner ? "contained" : "outlined"} onClick={() => setAddSecondOwner(false)}   >
+                                    <Button variant="outlined" className={`home-based-button ${!addSecondOwner ? "selected" : ""}`} onClick={() => setAddSecondOwner(false)}   >
                                         No
                                     </Button>
                                 </Grid>
