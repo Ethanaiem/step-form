@@ -108,14 +108,14 @@ const MultiStepFormExtended = () => {
                         if (data.EIN) setTaxDetails(prev => ({ ...prev, EIN: data.EIN }));
                         if (data.secondOwnerTaxDetails) setSecondOwnerTaxDetails({ SSN: data.secondOwnerTaxDetails });
                         if (data.activeStep) setActiveStep(data.activeStep);
-                        if (data.monthlyRevenue) setPrevFormData(prev => ({ ...prev, monthlyRevenue: data.monthlyRevenue }));
-                        if (data.SSN) setPrevFormData(prev => ({ ...prev, SSN: data.SSN }));
-                        if (data.creditScore) setPrevFormData(prev => ({ ...prev, creditScore: data.creditScore }));
-                        if (data.loanAmount) setPrevFormData(prev => ({ ...prev, loanAmount: data.loanAmount }));
+                        if(data.monthlyRevenue) setPrevFormData(prev => ({ ...prev, monthlyRevenue: data.monthlyRevenue }));
+                        if(data.SSN) setTaxDetails(prev => ({ ...prev, SSN: data.SSN }));
+                        if(data.creditScore) setPrevFormData(prev => ({ ...prev, creditScore: data.creditScore }));
+                        if(data.loanAmount) setPrevFormData(prev => ({ ...prev, loanAmount: data.loanAmount }));
+                        if(data.ownershipPercentage) (setOwnershipPercentage(data.ownershipPercentage));
 
                         setIsSoleOwner(data.isSoleOwner);
                         setLoanPurpose(data.loanPurpose);
-                        setOwnershipPercentage(data.ownershipPercentage);
                         setAddSecondOwner(data.addSecondOwner);
                         setIsHomeBased(data.isHomeBased);
                         setFundingTime(data.fundingTime);
