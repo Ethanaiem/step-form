@@ -366,9 +366,9 @@ const MultiStepForm = () => {
                                 QUICK & FLEXIBLE BUSINESS LOANS
                             </Typography>
                             <div style={{ display: "flex", justifyContent: "center", }} >
-                                <img src={img1} alt="" style={{ width: "90px" }} />
-                                <img src={img2} alt="" style={{ width: "90px", margin: "0 20px" }} />
-                                <img src={img3} alt="" style={{ width: "90px" }} />
+                                <img src={img1} alt="" className='image-setter' />
+                                <img src={img2} alt="" style={{margin: "0 20px" }} className='image-setter' />
+                                <img src={img3} alt="" className='image-setter' />
                             </div>
                             <div className="step-content">
 
@@ -458,7 +458,7 @@ const MultiStepForm = () => {
                                     "More than 5 years",
                                     "I currently don't own a business",
                                 ].map((period) => (
-                                    <Grid item xs={6} key={period}>
+                                    <Grid item xs={12} sm={6} key={period}>
                                         <Button
                                             variant="outlined"
                                             fullWidth
@@ -511,7 +511,7 @@ const MultiStepForm = () => {
                                     "$100,000 - $200,000",
                                     "$200,000+",
                                 ].map((revenue) => (
-                                    <Grid item xs={6} key={revenue}>
+                                    <Grid item xs={12} sm={6} key={revenue}>
                                         <Button
                                             variant="outlined"
                                             fullWidth
@@ -561,7 +561,7 @@ const MultiStepForm = () => {
                                     "720 or Above",
                                     "Not Sure",
                                 ].map((score) => (
-                                    <Grid item xs={6} key={score}>
+                                    <Grid item xs={12} sm={6} key={score}>
                                         <Button
                                             variant="outlined"
                                             fullWidth
@@ -604,8 +604,8 @@ const MultiStepForm = () => {
                             <Typography variant="body1" align="center" gutterBottom className="sub-text">
                                 And get your loan offer now!
                             </Typography>
-                            <Grid container spacing={0}>
-                                <Grid item xs={5.8} >
+                            <Grid container spacing={2}>
+                                <Grid item  xs={12} sm={6} >
                                     <TextField
                                         label="First Name"
                                         name="firstName"
@@ -618,7 +618,7 @@ const MultiStepForm = () => {
                                         helperText={errors.firstName && 'This field cannot be empty'}
                                     />
                                 </Grid>
-                                <Grid item xs={5.8} style={{ marginLeft: '17px' }}>
+                                <Grid item xs={12} sm={6} >
                                     <TextField
                                         label="Last Name"
                                         name="lastName"
