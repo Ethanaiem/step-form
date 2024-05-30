@@ -82,7 +82,8 @@
     color: #1e2a78 !important;
     border-radius: 5px !important;
     font-family: "Montserrat", sans-serif !important;
-    margin-left: 10px !important;
+    /* margin-left: 10px !important; */
+
 }
 
 .time-period-button:hover {
@@ -98,7 +99,7 @@
 }
 
 .step-navigation {
-    margin-top: 20px;
+    margin-top: 20px;   
     display: flex;
     justify-content: space-between;
 }
@@ -174,29 +175,47 @@
     transition: background-color 0.3s ease !important;
 }
 
-.image-setter{
+.image-setter {
     height: 90px !important;
     width: 90px !important;
 }
 
 @media (max-width: 768px) {
-    .title{
+    .grid-container {
+        padding-right: 10px !important;
+    }
+
+    .grid-layout {
+        padding-top: -2px !important;
+    }
+
+    .time-period-button {
+        font-size: 12px !important;
+        /* padding: ; */
+        line-height: 1.2 !important;
+    }
+
+    .title {
         font-size: 22px !important;
 
     }
+
     .step-title {
         font-size: 20px !important;
     }
-    .step-title-mini{
+
+    .step-title-mini {
         font-size: 18px !important;
     }
-    .loan-next-button{
+
+    .loan-next-button {
         font-size: 13px !important;
         padding: 7px 8px !important;
     }
-    .image-setter{
+
+    .image-setter {
         height: 75px !important;
         width: 75px !important;
     }
-   
+
 }

@@ -108,11 +108,11 @@ const MultiStepFormExtended = () => {
                         if (data.EIN) setTaxDetails(prev => ({ ...prev, EIN: data.EIN }));
                         if (data.secondOwnerTaxDetails) setSecondOwnerTaxDetails({ SSN: data.secondOwnerTaxDetails });
                         if (data.activeStep) setActiveStep(data.activeStep);
-                        if(data.monthlyRevenue) setPrevFormData(prev => ({ ...prev, monthlyRevenue: data.monthlyRevenue }));
-                        if(data.SSN) setTaxDetails(prev => ({ ...prev, SSN: data.SSN }));
-                        if(data.creditScore) setPrevFormData(prev => ({ ...prev, creditScore: data.creditScore }));
-                        if(data.loanAmount) setPrevFormData(prev => ({ ...prev, loanAmount: data.loanAmount }));
-                        if(data.ownershipPercentage) (setOwnershipPercentage(data.ownershipPercentage));
+                        if (data.monthlyRevenue) setPrevFormData(prev => ({ ...prev, monthlyRevenue: data.monthlyRevenue }));
+                        if (data.SSN) setTaxDetails(prev => ({ ...prev, SSN: data.SSN }));
+                        if (data.creditScore) setPrevFormData(prev => ({ ...prev, creditScore: data.creditScore }));
+                        if (data.loanAmount) setPrevFormData(prev => ({ ...prev, loanAmount: data.loanAmount }));
+                        if (data.ownershipPercentage) (setOwnershipPercentage(data.ownershipPercentage));
 
                         setIsSoleOwner(data.isSoleOwner);
                         setLoanPurpose(data.loanPurpose);
@@ -364,7 +364,7 @@ const MultiStepFormExtended = () => {
             owner_one_city: homeAddress.city,
             owner_one_state: homeAddress.state,
             owner_one_zip: homeAddress.zip.toString(),
-            owner_one_cs:  prevFormData.creditScore,
+            owner_one_cs: prevFormData.creditScore,
             owner_two_name: secondOwnerFormData.firstName + secondOwnerFormData.lastName,
             owner_two_email: secondOwnerFormData.email,
             owner_two_contact: secondOwnerFormData.contactNumber?.toString(),
@@ -669,9 +669,9 @@ const MultiStepFormExtended = () => {
                             <Typography variant="h5" align="center" gutterBottom className="step-title-mini">
                                 Please select your business entity
                             </Typography>
-                            <Grid container spacing={2}>
+                            <Grid container rowSpacing={2} columnSpacing={2} className='grid-container'>
                                 {["LLC", "Sole Proprietorship", "Partnership", "Non-Profit", "C Corporation", "S Corporation", "Professional Corporation", "I haven't registered it yet", "I am not sure",].map((entity) => (
-                                    <Grid item xs={12} sm={6} key={entity}>
+                                    <Grid item xs={6} sm={6} key={entity}>
                                         <Button variant="outlined" fullWidth className={`business-entity-button ${businessEntity === entity ? 'selected' : ''}`} onClick={() => handleBusinessEntitySelect(entity)} >
                                             {entity}
                                         </Button>
@@ -688,7 +688,7 @@ const MultiStepFormExtended = () => {
                             <Typography variant="h5" align="center" gutterBottom className="step-title-mini">
                                 Please enter your business address
                             </Typography>
-                            <Grid container spacing={2}>
+                            <Grid container columnSpacing={2} className='grid-container grid-layout'>
                                 {Object.keys(address).map((key) => (
                                     <Grid item xs={12} sm={6} key={key}>
                                         <TextField
@@ -789,10 +789,10 @@ const MultiStepFormExtended = () => {
                                 />
                             </LocalizationProvider>
                             <div className="step-navigation">
-                                <Button variant="contained" color="secondary" onClick={handleBack} className="back-button" style={{ padding: "18px 32px", fontSize: "16px", borderRadius: "8px" }} >
+                                <Button variant="contained" color="secondary" onClick={handleBack} className="back-button" style={{ padding: "18px 32px", fontSize: "16px", borderRadius: "8px" }}  >
                                     Back
                                 </Button>
-                                <Button variant="contained" color="primary" onClick={() => handleNext('registrationDate')} className="next-button" style={{ padding: "18px 32px", fontSize: "16px", borderRadius: "8px" }} disabled={!registrationDate}>
+                                <Button variant="contained" color="primary" onClick={() => handleNext('registrationDate')} className="next-button" disabled={!registrationDate} style={{ padding: "18px 32px", fontSize: "16px", borderRadius: "8px" }} >
                                     Next
                                 </Button>
                             </div>
@@ -806,7 +806,7 @@ const MultiStepFormExtended = () => {
                             <Typography variant="h5" align="center" gutterBottom className="step-title-mini">
                                 Enter Your Home Address
                             </Typography>
-                            <Grid container spacing={2}>
+                            <Grid container columnSpacing={2} className='grid-layout grid-container' >
                                 {Object.entries(homeAddress).map(([key, value]) => (
                                     <Grid item xs={12} sm={6} key={key}>
                                         <TextField label={key.charAt(0).toUpperCase() + key.slice(1)} name={key} value={value} onChange={handleInputChange(setHomeAddress, setErrorMessages)} fullWidth margin="normal" required
@@ -857,10 +857,10 @@ const MultiStepFormExtended = () => {
                                 </Typography>
                             )}
                             <div className="step-navigation">
-                                <Button variant="contained" color="secondary" onClick={handleBack} className="back-button" style={{ padding: "18px 32px", fontSize: "16px", borderRadius: "8px" }}>
+                                <Button variant="contained" color="secondary" onClick={handleBack} className="back-button" style={{ padding: "18px 32px", fontSize: "16px", borderRadius: "8px" }}  >
                                     Back
                                 </Button>
-                                <Button variant="contained" color="primary" onClick={handleNext} className="next-button" style={{ padding: "18px 32px", fontSize: "16px", borderRadius: "8px" }} disabled={!isStepValid(4)}>
+                                <Button variant="contained" color="primary" onClick={handleNext} className="next-button" disabled={!isStepValid(4)} style={{ padding: "18px 32px", fontSize: "16px", borderRadius: "8px" }} >
                                     Next
                                 </Button>
                             </div>
@@ -947,9 +947,9 @@ const MultiStepFormExtended = () => {
                             <Typography variant="h5" align="center" gutterBottom className="step-title-mini">
                                 What do you need the money for?
                             </Typography>
-                            <Grid container spacing={2}>
+                            <Grid container rowSpacing={2} columnSpacing={2} className='grid-container'>
                                 {loanPurposes.map(purpose => (
-                                    <Grid item xs={12} sm={6} key={purpose}>
+                                    <Grid item xs={6} sm={6} key={purpose}>
                                         <Button variant={loanPurpose === purpose ? "contained" : "outlined"} onClick={() => handleLoanPurpose(purpose)} fullWidth >
                                             {purpose}
                                         </Button>
@@ -975,9 +975,9 @@ const MultiStepFormExtended = () => {
                             <Typography variant="h5" align="center" gutterBottom className="step-title-mini">
                                 What do you need the money for?
                             </Typography>
-                            <Grid container spacing={2}>
+                            <Grid container rowSpacing={2} columnSpacing={2} className='grid-container'>
                                 {loanPurposes.map(purpose => (
-                                    <Grid item xs={12} sm={6} key={purpose}>
+                                    <Grid item xs={6} sm={6} key={purpose}>
                                         <Button variant={loanPurpose === purpose ? "contained" : "outlined"} onClick={() => handleLoanPurpose(purpose)} fullWidth >
                                             {purpose}
                                         </Button>
@@ -1003,9 +1003,9 @@ const MultiStepFormExtended = () => {
                             <Typography variant="h5" align="center" gutterBottom className="step-title-mini">
                                 When do you need the money?
                             </Typography>
-                            <Grid container spacing={2}>
+                            <Grid container rowSpacing={2} columnSpacing={2} className='grid-container'>
                                 {fundingOptions.map(option => (
-                                    <Grid item xs={12} sm={6} key={option}>
+                                    <Grid item xs={6} sm={6} key={option}>
                                         <Button variant={fundingTime === option ? "contained" : "outlined"} onClick={() => setFundingTime(option)} fullWidth >
                                             {option}
                                         </Button>
@@ -1063,9 +1063,9 @@ const MultiStepFormExtended = () => {
                             <Typography variant="h5" align="center" gutterBottom className="step-title-mini">
                                 What do you need the money for?
                             </Typography>
-                            <Grid container spacing={2}>
+                            <Grid container rowSpacing={2} columnSpacing={2} className='grid-container'>
                                 {loanPurposes.map(purpose => (
-                                    <Grid item xs={12} sm={6} key={purpose}>
+                                    <Grid item xs={6} sm={6} key={purpose}>
                                         <Button variant={loanPurpose === purpose ? "contained" : "outlined"} onClick={() => handleLoanPurpose(purpose)} fullWidth >
                                             {purpose}
                                         </Button>
@@ -1092,9 +1092,9 @@ const MultiStepFormExtended = () => {
                             <Typography variant="h5" align="center" gutterBottom className="step-title-mini">
                                 When do you need the money?
                             </Typography>
-                            <Grid container spacing={2}>
+                            <Grid container rowSpacing={2} columnSpacing={2} className='grid-container'>
                                 {fundingOptions.map(option => (
-                                    <Grid item xs={12} sm={6} key={option}>
+                                    <Grid item xs={6} sm={6} key={option}>
                                         <Button variant={fundingTime === option ? "contained" : "outlined"} onClick={() => setFundingTime(option)} fullWidth >
                                             {option}
                                         </Button>
@@ -1121,9 +1121,9 @@ const MultiStepFormExtended = () => {
                             <Typography variant="h5" align="center" gutterBottom className="step-title-mini">
                                 What do you need the money for?
                             </Typography>
-                            <Grid container spacing={2}>
+                            <Grid container rowSpacing={2} columnSpacing={2} className='grid-container'>
                                 {loanPurposes.map(purpose => (
-                                    <Grid item xs={12} sm={6} key={purpose}>
+                                    <Grid item xs={6} sm={6} key={purpose}>
                                         <Button variant={loanPurpose === purpose ? "contained" : "outlined"} onClick={() => handleLoanPurpose(purpose)} fullWidth >
                                             {purpose}
                                         </Button>
@@ -1150,9 +1150,9 @@ const MultiStepFormExtended = () => {
                             <Typography variant="h5" align="center" gutterBottom className="step-title-mini">
                                 When do you need the money?
                             </Typography>
-                            <Grid container spacing={2}>
+                            <Grid container rowSpacing={2} columnSpacing={2} className='grid-container'>
                                 {fundingOptions.map(option => (
-                                    <Grid item xs={12} sm={6} key={option}>
+                                    <Grid item xs={6} sm={6} key={option}>
                                         <Button variant={fundingTime === option ? "contained" : "outlined"} onClick={() => setFundingTime(option)} fullWidth >
                                             {option}
                                         </Button>
@@ -1177,9 +1177,9 @@ const MultiStepFormExtended = () => {
                             <Typography variant="h5" align="center" gutterBottom className="step-title-mini">
                                 When do you need the money?
                             </Typography>
-                            <Grid container spacing={2}>
+                            <Grid container rowSpacing={2} columnSpacing={2} className='grid-container'>
                                 {fundingOptions.map(option => (
-                                    <Grid item xs={12} sm={6} key={option}>
+                                    <Grid item xs={6} sm={6} key={option}>
                                         <Button
                                             variant={fundingTime === option ? "contained" : "outlined"}
                                             onClick={() => setFundingTime(option)}
@@ -1210,7 +1210,7 @@ const MultiStepFormExtended = () => {
                                 Please Input Second Owner information
                             </Typography>
 
-                            <Grid container spacing={2}>
+                            <Grid container  columnSpacing={2} className='grid-layout' >
                                 <Grid item xs={12} sm={6}>
                                     <TextField
                                         label="First Name"
@@ -1276,7 +1276,7 @@ const MultiStepFormExtended = () => {
                             <Typography variant="h5" align="center" gutterBottom className="step-title-mini">
                                 Please Enter Second Owner Home Address
                             </Typography>
-                            <Grid container spacing={2}>
+                            <Grid container columnSpacing={2} className='grid-layout'>
                                 {Object.entries(secondOwnerHomeAddress).map(([key, value]) => (
                                     <Grid item xs={12} sm={6} key={key}>
                                         <TextField
@@ -1345,10 +1345,10 @@ const MultiStepFormExtended = () => {
                                 </Typography>
                             )}
                             <div className="step-navigation">
-                                <Button variant="contained" color="secondary" onClick={handleBack} className="back-button" style={{ padding: "18px 32px", fontSize: "16px", borderRadius: "8px" }}>
+                                <Button variant="contained" color="secondary" onClick={handleBack} className="back-button" style={{ padding: "18px 32px", fontSize: "16px", borderRadius: "8px" }}  >
                                     Back
                                 </Button>
-                                <Button variant="contained" color="primary" onClick={() => handleNext('secondOwnerDOB')} className="next-button" style={{ padding: "18px 32px", fontSize: "16px", borderRadius: "8px" }} disabled={!isStepValid(11)}>
+                                <Button variant="contained" color="primary" onClick={() => handleNext('secondOwnerDOB')} className="next-button" disabled={!isStepValid(11)} style={{ padding: "18px 32px", fontSize: "16px", borderRadius: "8px" }} >
                                     Next
                                 </Button>
                             </div>
@@ -1362,7 +1362,7 @@ const MultiStepFormExtended = () => {
                             <Typography variant="h5" align="center" gutterBottom className="step-title-mini">
                                 Please Select Second Onwer Credit Score
                             </Typography>
-                            <Grid container spacing={2}>
+                            <Grid container rowSpacing={2} columnSpacing={2} className='grid-container'>
                                 {[
                                     "500 and Below",
                                     "500 - 549",
@@ -1372,7 +1372,7 @@ const MultiStepFormExtended = () => {
                                     "720 or Above",
                                     "Not Sure",
                                 ].map((score) => (
-                                    <Grid item xs={12} sm={6} key={score}>
+                                    <Grid item xs={6} sm={6} key={score}>
                                         <Button
                                             variant="outlined"
                                             fullWidth
@@ -1400,9 +1400,9 @@ const MultiStepFormExtended = () => {
                             <Typography variant="h5" align="center" gutterBottom className="step-title-mini">
                                 What do you need the money for?
                             </Typography>
-                            <Grid container spacing={2}>
+                            <Grid container rowSpacing={2} columnSpacing={2} className='grid-container'>
                                 {loanPurposes.map(purpose => (
-                                    <Grid item xs={12} sm={6} key={purpose}>
+                                    <Grid item xs={6} sm={6} key={purpose}>
                                         <Button
                                             variant={loanPurpose === purpose ? "contained" : "outlined"}
                                             onClick={() => handleLoanPurpose(purpose)}
@@ -1429,9 +1429,9 @@ const MultiStepFormExtended = () => {
                             <Typography variant="h5" align="center" gutterBottom className="step-title-mini">
                                 When do you need the money?
                             </Typography>
-                            <Grid container spacing={2}>
+                            <Grid container rowSpacing={2} columnSpacing={2} className='grid-container'>
                                 {fundingOptions.map(option => (
-                                    <Grid item xs={12} sm={6} key={option}>
+                                    <Grid item xs={6} sm={6} key={option}>
                                         <Button
                                             variant={fundingTime === option ? "contained" : "outlined"}
                                             onClick={() => setFundingTime(option)}
