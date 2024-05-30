@@ -7,11 +7,13 @@
     text-align: center;
     font-family: "Montserrat", sans-serif !important;
 }
+
 @media (max-width: 768px) {
     .form-container {
         width: 80% !important;
     }
 }
+
 /* @media (min-width: 1024px) {
     .form-container {
         width: 50% !important;
@@ -32,8 +34,10 @@
 
 .stepper .MuiStepConnector-line {
     border-top-width: 2px;
-    border-top-style: solid; /* Ensures the line is solid */
-    border-color: #154192; /* Deep blue color for the line */
+    border-top-style: solid;
+    /* Ensures the line is solid */
+    border-color: #154192;
+    /* Deep blue color for the line */
 }
 
 .step-content {
@@ -46,18 +50,21 @@
     margin-bottom: 20px;
 }
 
-.business-entity-button, .home-based-button {
-    height:56px !important;
+.business-entity-button,
+.home-based-button {
+    height: 56px !important;
     font-size: 16px;
     border: 1px solid #ccc;
     color: #333;
-    margin: 5px; /* Spacing around buttons */
+    margin: 5px;
+    /* Spacing around buttons */
 }
 
-.business-entity-button.selected, .home-based-button.selected {
+.business-entity-button.selected,
+.home-based-button.selected {
     background-color: #154192 !important;
-    border-color:#154192;
-    color:#fff;
+    border-color: #154192;
+    color: #fff;
 }
 
 .step-navigation {
@@ -68,9 +75,11 @@
 
 /* Additional styles for step 9 */
 .step-content button {
-    margin: 8px;
-    border-radius: 10px; /* Rounded corners for buttons */
-    box-shadow: none; /* Remove default MUI button shadows if needed */
+    /* margin: 8px; */
+    border-radius: 10px;
+    /* Rounded corners for buttons */
+    box-shadow: none;
+    /* Remove default MUI button shadows if needed */
     padding: 32px !important;
 }
 
@@ -81,55 +90,79 @@
 }
 
 /* Ensure buttons are clearly readable and visually appealing */
-.step-content button {  
+.step-content button {
     height: 40px;
-    font-size: 16px; /* Suitable font size for readability */
-    color: #333; /* Dark font for better contrast */
-    border: 1px solid #ccc; /* Subtle borders for buttons */
+    font-size: 16px;
+    /* Suitable font size for readability */
+    color: #333;
+    /* Dark font for better contrast */
+    border: 1px solid #ccc;
+    /* Subtle borders for buttons */
 }
+
 .step-content .MuiButton-contained {
-    background-color: #154192 !important; /* Background color for contained buttons */
-    color: #FFFFFF; /* Text color for contained buttons */
+    background-color: #154192 !important;
+    /* Background color for contained buttons */
+    color: #FFFFFF;
+    /* Text color for contained buttons */
 }
 
 .step-content .MuiButton-contained:hover {
-    background-color: #154192 !important; /* Background color for contained buttons on hover */
-    color: #FFFFFF; /* Text color for contained buttons on hover */
+    background-color: #154192 !important;
+    /* Background color for contained buttons on hover */
+    color: #FFFFFF;
+    /* Text color for contained buttons on hover */
 }
 
 
 
 /* Additional styles for the slider */
 .MuiSlider-root {
-    color: #154192 !important; /* Color for the slider thumb and track */
-    margin: 20px; /* Spacing around the slider for better interaction */
+    color: #154192 !important;
+    /* Color for the slider thumb and track */
+    margin: 20px;
+    /* Spacing around the slider for better interaction */
 }
 
 .back-button {
-    background-color: #f0f0f0; /* Light grey background for back button */
+    background-color: #f0f0f0;
+    /* Light grey background for back button */
     margin-right: 10px;
 }
 
 .next-button:disabled {
-    background-color: #e0e0e0 !important;  /* Disabled state */
+    background-color: #e0e0e0 !important;
+    /* Disabled state */
     color: #888;
-    }
+}
 
-    .next-button, .back-button {
-        background-color: #154192 !important; /* Light blue background */
-        color: #333;
-        font-weight: bold;
-        margin-top: 20px;
-    }
+.next-button,
+.back-button {
+    background-color: #154192 !important;
+    /* Light blue background */
+    color: #333;
+    font-weight: bold;
+    margin-top: 20px;
+}
 
 
-    /* Responsive grid layout for business entity buttons */
+/* Responsive grid layout for business entity buttons */
 @media (max-width: 600px) {
     .business-entity-button {
         font-size: 14px;
         padding: 12px;
     }
+
     .step-content .MuiButton-contained {
         padding: 12px;
     }
+}
+
+@media (max-width: 768px) {
+    .step-content button {
+        padding: 2px 9px !important;
+        font-size: 11px;
+        line-height: 1.2 !important;
+    }
+
 }

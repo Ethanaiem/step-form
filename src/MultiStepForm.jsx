@@ -521,7 +521,7 @@ const MultiStepForm = () => {
                                         </Step>
                                     ))}
                                 </Stepper>
-                                <Grid container spacing={3}>
+                                <Grid container rowSpacing={1} columnSpacing={2} className='grid-container'>
                                     {[
                                         "Less than 3 months",
                                         "3 - 5 months",
@@ -531,7 +531,7 @@ const MultiStepForm = () => {
                                         "More than 5 years",
                                         "I currently don't own a business",
                                     ].map((period) => (
-                                        <Grid item xs={12} sm={6} key={period}>
+                                        <Grid item xs={6} sm={6} key={period}>
                                             <Button
                                                 variant="outlined"
                                                 fullWidth
@@ -572,7 +572,7 @@ const MultiStepForm = () => {
                                         </Step>
                                     ))}
                                 </Stepper>
-                                <Grid container spacing={3}>
+                                <Grid container rowSpacing={1} columnSpacing={2} className='grid-container'>
                                     {[
                                         "Less than $1,000",
                                         "$1,000 - $5,000",
@@ -584,7 +584,7 @@ const MultiStepForm = () => {
                                         "$100,000 - $200,000",
                                         "$200,000+",
                                     ].map((revenue) => (
-                                        <Grid item xs={12} sm={6} key={revenue}>
+                                        <Grid item xs={6} sm={6} key={revenue}>
                                             <Button
                                                 variant="outlined"
                                                 fullWidth
@@ -624,7 +624,7 @@ const MultiStepForm = () => {
                                         </Step>
                                     ))}
                                 </Stepper>
-                                <Grid container spacing={3}>
+                                <Grid container rowSpacing={1} columnSpacing={2} className='grid-container'>
                                     {[
                                         "500 and Below",
                                         "500 - 549",
@@ -634,7 +634,7 @@ const MultiStepForm = () => {
                                         "720 or Above",
                                         "Not Sure",
                                     ].map((score) => (
-                                        <Grid item xs={12} sm={6} key={score}>
+                                        <Grid item xs={6} sm={6} key={score}>
                                             <Button
                                                 variant="outlined"
                                                 fullWidth
@@ -677,8 +677,8 @@ const MultiStepForm = () => {
                                 <Typography variant="body1" align="center" gutterBottom className="sub-text">
                                     And get your loan offer now!
                                 </Typography>
-                                <Grid container spacing={2}>
-                                    <Grid item xs={12} sm={6} >
+                                <Grid container columnSpacing={2} className='grid-layout'>
+                                    <Grid item xs={12} sm={6}  >
                                         <TextField
                                             label="First Name"
                                             name="firstName"
@@ -691,7 +691,7 @@ const MultiStepForm = () => {
                                             helperText={errors.firstName && 'This field cannot be empty'}
                                         />
                                     </Grid>
-                                    <Grid item xs={12} sm={6} >
+                                    <Grid item xs={12} sm={6}  >
                                         <TextField
                                             label="Last Name"
                                             name="lastName"
@@ -704,7 +704,7 @@ const MultiStepForm = () => {
                                             helperText={errors.lastName && 'This field cannot be empty'}
                                         />
                                     </Grid>
-                                    <Grid item xs={12}>
+                                    <Grid item xs={12} >
                                         <TextField
                                             label="Email Address"
                                             name="email"
