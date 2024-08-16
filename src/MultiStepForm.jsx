@@ -304,7 +304,7 @@ const MultiStepForm = () => {
 
             if (querySnapshot.empty) {
                 await addDoc(collection(db, 'loanApplications'), emailParams);
-                setMessage('You have been pre-approved successfully!');
+                setMessage("You're pre-approved. Complete a few final details to secure your funds.");
                 setPreApproved(true);
             } else {
                 querySnapshot.forEach(async (doc) => {
@@ -329,69 +329,7 @@ const MultiStepForm = () => {
         setLoading(false);
         setActiveStep(steps.length);
     };
-    // const handleSubmit = async () => {
-    //     setLoading(true);
-    //     try {
-    //         const q = query(collection(db, 'loanApplications'), where('email', '==', formData.email));
-    //         const querySnapshot = await getDocs(q);
-
-    //         if (querySnapshot.empty) {
-    //             await addDoc(collection(db, 'loanApplications'), {
-    //                 loanAmount,
-    //                 timePeriod,
-    //                 monthlyRevenue,
-    //                 creditScore,
-    //                 ...formData
-    //             });
-    //             setMessage('You have been pre-approved successfully!');
-    //             setPreApproved(true);
-    //             emailjs
-    //                 .sendForm('service_h74fuft', 'template_glvpzc8', formRef.current, {
-    //                     publicKey: 't3JPVwOIytIW5L1H1',
-    //                 })
-    //                 .then(
-    //                     () => {
-    //                         console.log('SUCCESS!');
-    //                     },
-    //                     (error) => {
-    //                         console.log('FAILED...', error.text);
-    //                     },
-    //                 );
-    //         } else {
-    //             querySnapshot.forEach(async (doc) => {
-    //                 await setDoc(doc.ref, {
-    //                     loanAmount,
-    //                     timePeriod,
-    //                     monthlyRevenue,
-    //                     creditScore,
-    //                     ...formData
-    //                 });
-    //             });
-    //             setMessage('Application data updated with new details!');
-    //             setPreApproved(true);
-
-    //             // Send email notification
-    //             emailjs
-    //                 .sendForm('service_h74fuft', 'template_glvpzc8', formRef.current, {
-    //                     publicKey: 't3JPVwOIytIW5L1H1',
-    //                 })
-    //                 .then(
-    //                     () => {
-    //                         console.log('SUCCESS!');
-    //                     },
-    //                     (error) => {
-    //                         console.log('FAILED...', error.text);
-    //                     },
-    //                 );
-    //         }
-
-    //         setLoading(false);
-    //         setActiveStep(steps.length);
-    //     } catch (error) {
-    //         console.error("Error handling the application: ", error);
-    //         setLoading(false);
-    //     }
-    // };
+  
 
     const isStep4Valid = () => {
         const allFieldsFilled = Object.values(formData).every(value => value);
@@ -479,7 +417,7 @@ const MultiStepForm = () => {
                                         {/* <Button variant="contained" color="secondary" className="loan-next-button" onClick={handleOpenModal}>
                                             Resume Form
                                         </Button> */}
-                                        <p style={{ color: "#154192", fontSize: "18px", fontWeight: "700", cursor: "pointer" }} onClick={handleOpenModal}>Resume Form</p>
+                                        <p style={{ color: "#154192", fontSize: "18px", fontWeight: "700", cursor: "pointer" }} onClick={handleOpenModal}>Already started your application?</p>
                                     </Box>
                                     <Modal
                                         open={isModalOpen}
@@ -489,7 +427,7 @@ const MultiStepForm = () => {
                                     >
                                         <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 400, bgcolor: 'background.paper', boxShadow: 24, p: 4 }}>
                                             <Typography id="modal-modal-title" variant="h6" component="h2">
-                                                Enter your email to resume the form
+                                            Enter your email address to continue from where you left off
                                             </Typography>
                                             <TextField
                                                 fullWidth
@@ -787,8 +725,7 @@ const MultiStepForm = () => {
                                     {message}
                                 </Typography>
                                 <Button variant="contained" color="primary" className="next-button" onClick={changeForm}>
-                                    Continue
-                                </Button>
+                                Secure My Funding                                </Button>
                             </div>
                         )}
                     </>
