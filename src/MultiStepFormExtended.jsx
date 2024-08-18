@@ -66,10 +66,6 @@ const MultiStepFormExtended = () => {
     zip: "",
   });
 
-  useEffect(() => {
-    console.log({ loanPurpose });
-  }, [activeStep]);
-
   const [secondOwnerHomeAddress, setSecondOwnerHomeAddress] = useState({
     unit: "",
     street: "",
