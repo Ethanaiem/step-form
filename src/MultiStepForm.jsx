@@ -699,7 +699,7 @@ const MultiStepForm = () => {
                                     </Grid> */}
                                 </Grid>
                                 <FormControlLabel
-                                    control={<Checkbox name="agreement" checked={formData.agreement} onChange={handleInputChange} />}
+                                    control={<Checkbox  name="agreement" checked={formData.agreement} onChange={handleInputChange} />}
                                     // eslint-disable-next-line react/no-unescaped-entities
                                     label={<Typography variant="body2">By selecting "Get Loan Offers" you agree to our <a href="https://www.klendify.com/privacy-policy" target="_blank">Privacy Policy</a>.</Typography>}
                                     className="agreement-checkbox"
