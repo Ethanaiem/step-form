@@ -64,8 +64,9 @@
 .home-based-button.selected {
     background-color: #154192 !important;
     border-color: #154192;
-    color: #fff;
+    color: #fff !important;
 }
+
 
 .step-navigation {
     margin-top: 20px;
@@ -74,23 +75,36 @@
 
 
 /* Additional styles for step 9 */
-.step-content button {
-    /* margin: 8px; */
-    border-radius: 10px;
+.step-content button:not(.MuiIconButton-root) {
+    /*
     /* Rounded corners for buttons */
-    box-shadow: none;
+    /*  */
     /* Remove default MUI button shadows if needed */
-    padding: 32px !important;
+     padding: 32px !important; 
+
+    /* border: none  !important; ; */
+    /* margin-right: 0px !important; */
+    border-radius: 10px;
+    box-shadow: none !important;
+    
+
 }
 
-.step-content button:hover {
+.MuiButton-contained{
+    background-color: #154192 !important;
+    color: #ffffff !important;
+}
+
+.step-content button:hover  {
     /* background-color: #f0f0f0; Light grey background on hover */
     background-color: #154192 !important;
     color: #ffffff !important;
 }
 
+
+
 /* Ensure buttons are clearly readable and visually appealing */
-.step-content button {
+.step-content button:not(.MuiIconButton-root) {
     height: 40px;
     font-size: 16px;
     /* Suitable font size for readability */
@@ -99,6 +113,7 @@
     border: 1px solid #ccc;
     /* Subtle borders for buttons */
 }
+
 
 .step-content .MuiButton-contained {
     background-color: #154192 !important;
