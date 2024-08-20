@@ -84,6 +84,10 @@ const MultiStepFormExtended = () => {
     console.log({ businessEntity });
   }, [businessEntity]);
 
+
+
+  const infoTextSSN = "A soft credit pull is required and has no impact on the credit score.";
+  const infoTextEIN = "We use this to confirm your business identity and that you are the owner. This can be found at the top right of you tex return.";
   const [taxDetails, setTaxDetails] = useState({ SSN: "", ITIN: "", EIN: "" });
   const [secondOwnerTaxDetails, setSecondOwnerTaxDetails] = useState({
     SSN: "",
@@ -938,7 +942,7 @@ const MultiStepFormExtended = () => {
                       endAdornment: (
                         <Tooltip
                           sx={{ marginTop: 3, cursor: "pointer" }}
-                          title="Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit."
+                          title={infoTextEIN}
                         >
                           <InfoIcon
                             sx={{ marginLeft: 1, padding: 0 }}
@@ -1078,7 +1082,7 @@ const MultiStepFormExtended = () => {
                       endAdornment: (
                         <Tooltip
                           sx={{ marginTop: 3, cursor: "pointer" }}
-                          title="Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit."
+                          title={infoTextSSN}
                         >
                           <InfoIcon
                             sx={{ marginLeft: 1, padding: 0 }}
@@ -1863,7 +1867,7 @@ const MultiStepFormExtended = () => {
                       endAdornment: (
                         <Tooltip
                           sx={{ marginTop: 3, cursor: "pointer" }}
-                          title="Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit."
+                          title={infoTextSSN}
                         >
                           <InfoIcon
                             sx={{ marginLeft: 1, padding: 0 }}
