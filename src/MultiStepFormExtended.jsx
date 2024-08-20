@@ -1923,6 +1923,7 @@ const MultiStepFormExtended = () => {
               <Typography
                 variant="h5"
                 align="center"
+       
                 gutterBottom
                 className="step-title-mini"
               >
