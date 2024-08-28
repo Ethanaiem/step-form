@@ -627,7 +627,7 @@ const MultiStepForm = () => {
                   gutterBottom
                   className="step-title"
                 >
-                  Gross Monthly Revenue
+                 Business Gross Monthly Revenue
                 </Typography>
                 <Stepper
                   activeStep={activeStep}
