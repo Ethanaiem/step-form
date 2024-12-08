@@ -84,10 +84,10 @@ const MultiStepFormExtended = () => {
     console.log({ businessEntity });
   }, [businessEntity]);
 
-
-
-  const infoTextSSN = "A soft credit pull is required and has no impact on the credit score.";
-  const infoTextEIN = "We use this to confirm your business identity and that you are the owner. This can be found at the top right of you tex return.";
+  const infoTextSSN =
+    "A soft credit pull is required and has no impact on the credit score.";
+  const infoTextEIN =
+    "We use this to confirm your business identity and that you are the owner. This can be found at the top right of you tex return.";
   const [taxDetails, setTaxDetails] = useState({ SSN: "", ITIN: "", EIN: "" });
   const [secondOwnerTaxDetails, setSecondOwnerTaxDetails] = useState({
     SSN: "",
@@ -565,7 +565,7 @@ const MultiStepFormExtended = () => {
       );
       // window.location.href = response.data.url; // Redirect to the DocuSign signing ceremony
       const { url } = response.data;
-
+      console.log({ response });
       window.location.href = url;
     } catch (error) {
       console.error("Error submitting form", error);
@@ -1105,7 +1105,6 @@ const MultiStepFormExtended = () => {
                       label="Date of birth"
                       name="dateOfBirth"
                       fullWidth
-                     
                       value={dateOfBirth}
                       onChange={handleDobDateChange}
                       renderInput={(params) => <TextField {...params} />}
@@ -1923,7 +1922,6 @@ const MultiStepFormExtended = () => {
               <Typography
                 variant="h5"
                 align="center"
-       
                 gutterBottom
                 className="step-title-mini"
               >
